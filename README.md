@@ -19,15 +19,15 @@ npm run build
 
 The static output is written to `dist/`.
 
-## Cloudflare Pages
+## Cloudflare deployment
 
-Connect this repository to Cloudflare Pages with these settings:
+The site can be deployed through Cloudflare Workers Builds as a static-assets-only Worker. The checked-in `wrangler.jsonc` runs the Astro build and uploads `dist/`; no Cloudflare Astro adapter or server-side Worker code is needed.
+
+For a Cloudflare Pages project, use these equivalent settings:
 
 - **Build command:** `npm run build`
 - **Build output directory:** `dist`
 - **Root directory:** `/`
-
-No Cloudflare adapter is needed because the site is fully static.
 
 ## Protocol sources
 
