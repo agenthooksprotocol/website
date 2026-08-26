@@ -80,7 +80,9 @@ Array order is the interceptor evaluation order — see
 | `includeNative` | Optional | Boolean; defaults to `false`. |
 
 An `intercept` subscription may contain only `tool.before` in v0.1. An `observe`
-subscription must not include `timeoutMs` or `failurePolicy`.
+subscription must not include `timeoutMs` or `failurePolicy`. The harness routes an event to
+a backend only when that backend has a subscription whose `events` array contains the exact
+event name and whose `mode` matches the delivery method.
 
 ## Transport fields
 

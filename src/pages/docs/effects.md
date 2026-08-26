@@ -19,7 +19,8 @@ Every `hooks/intercept` request includes a capabilities object:
 }
 ```
 
-A harness claiming the v0.1 Tool Interception profile advertises `deny` for `tool.before`.
+A harness claiming the v0.1 Tool Interception profile advertises `deny` in the event's
+`capabilities.effects` array, declaring that it accepts and enforces a valid `deny` effect.
 Returning an unadvertised effect is an operational protocol failure, not an implicit no-op —
 the harness applies the interceptor's configured failure policy.
 

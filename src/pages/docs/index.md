@@ -29,8 +29,8 @@ different things in different harnesses, or nothing at all.
 AHP standardizes the boundary between a harness and a control backend:
 
 ```text
-Existing harness ─▶ compatibility adapter ─▶ AHP backend
-Conforming harness ─────────────────────────▶ AHP backend
+Existing harness ─▶ compatibility adapter ── AHP ─▶ AHP backend
+Conforming harness ───────────────── AHP ─────▶ AHP backend
 ```
 
 ## What AHP standardizes
@@ -51,8 +51,9 @@ Conforming harness ────────────────────�
 ## The minimum v0.1 path
 
 A harness is about to execute a tool call and emits `tool.before` through
-`hooks/intercept`. The request says that `deny` is available. Each matching backend returns
-either no effect or one `deny` effect.
+`hooks/intercept`. The request advertises `deny` in `capabilities.effects`, declaring that
+the harness accepts and enforces a valid denial. Each matching backend returns either no
+effect or one `deny` effect.
 
 - **No effect** means that backend has no objection. It does not bypass the harness's own
   permission checks.

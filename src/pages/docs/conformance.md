@@ -32,16 +32,23 @@ unless it explicitly declares a non-portable extension dependency.
 
 The minimum control capability in v0.1: `tool.before` interception with the `deny` effect.
 
-A claiming harness, given an enabled subscription covering a pending tool call:
+A claiming harness, given an intercept subscription whose `events` array contains
+`tool.before`:
 
 - sends one `hooks/intercept` request after tool name and input are final and before tool
-  side effects, advertising `deny`;
+  side effects, advertising `deny` in `capabilities.effects` to declare that it accepts and
+  enforces a valid denial;
 - keeps the JSON-RPC request ID equal to the event ID and preserves identity across retries;
 - executes matching interceptors serially in deterministic registration order under their
   configured deadlines;
 - stops tool execution after an explicit denial or fail-closed operational failure; and
 - continues its own permissions, sandboxing, and approval flow when the chain completes
   without denial.
+
+The harness sends an event to a backend only when that backend's registration contains a
+subscription whose `events` array includes the exact event name and whose `mode` matches the
+delivery method. If no intercept subscription matches `tool.before`, AHP adds no decision
+step and the harness continues its normal authorization flow.
 
 A claiming backend, given a syntactically valid `hooks/intercept` request for protocol
 `0.1` and `tool.before`, returns exactly one successful response containing either

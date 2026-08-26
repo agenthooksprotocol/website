@@ -14,6 +14,7 @@ component is the **AHP server**, called a backend.
 | --- | --- |
 | **Harness** | The agent runtime that is about to perform an operation. The AHP client. |
 | **Backend** | The external policy, security, approval, or middleware component receiving AHP messages. The AHP server. |
+| **Subscription** | An entry in a backend's registration that selects exact event names and a delivery mode, together with any mode-specific timeout and failure behavior. |
 | **Interceptor** | A backend subscription using `intercept` mode. The harness waits for its response. |
 | **Observer** | A backend subscription using `observe` mode. The harness does not wait for a decision. |
 | **Operation** | The harness action represented by an event, such as a tool call. |
