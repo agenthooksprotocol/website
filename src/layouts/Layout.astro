@@ -1,5 +1,8 @@
 ---
 import '../styles/global.css';
+import Logo from '../components/Logo.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { GITHUB_ORG, SPEC_URL } from '../config/nav';
 
 interface Props {
   title?: string;
@@ -12,18 +15,23 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const pathname = Astro.url.pathname;
+const isDocs = pathname === '/docs' || pathname.startsWith('/docs/');
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#f6f7f2" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#101413" />
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -31,53 +39,64 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:image" content={new URL('/social-card.png', Astro.site)} />
     <meta name="twitter:card" content="summary_large_image" />
     <title>{title}</title>
+    <script is:inline>
+      (() => {
+        let theme;
+        try {
+          theme = localStorage.getItem('ahp-theme');
+        } catch {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
     <header class="site-header">
-      <a class="brand" href="/" aria-label="Agent Hooks Protocol home">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-          <path d="M8 7.5v17M24 7.5v17M8 12h7a4 4 0 0 1 4 4v0a4 4 0 0 0 4 4h1" />
-          <circle cx="8" cy="7.5" r="2.5" />
-          <circle cx="8" cy="24.5" r="2.5" />
-          <circle cx="24" cy="7.5" r="2.5" />
-          <circle cx="24" cy="24.5" r="2.5" />
-        </svg>
-        <span>Agent Hooks Protocol</span>
-      </a>
-      <nav aria-label="Primary navigation">
-        <a href="/#protocol">Protocol</a>
-        <a href="/docs/">Docs</a>
-        <a href="https://github.com/agenthooksprotocol" target="_blank" rel="noreferrer">
-          GitHub
-          <span aria-hidden="true">↗</span>
+      <div class="site-header-inner">
+        <a class="brand" href="/">
+          <Logo />
+          <span class="brand-name">Agent Hooks Protocol</span>
         </a>
-      </nav>
+        <a class="draft-badge" href={SPEC_URL}>v0.1 Working Draft</a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="/docs/" aria-current={isDocs ? 'page' : undefined}>Docs</a>
+          <a href="/docs/specification/">Specification</a>
+          <a href={GITHUB_ORG} target="_blank" rel="noreferrer">
+            GitHub<span class="external-mark" aria-hidden="true">↗</span>
+          </a>
+        </nav>
+        <ThemeToggle />
+      </div>
     </header>
 
-    <main>
+    <main id="main">
       <slot />
     </main>
 
     <footer class="site-footer">
-      <div>
-        <a class="brand footer-brand" href="/">
-          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M8 7.5v17M24 7.5v17M8 12h7a4 4 0 0 1 4 4v0a4 4 0 0 0 4 4h1" />
-            <circle cx="8" cy="7.5" r="2.5" />
-            <circle cx="8" cy="24.5" r="2.5" />
-            <circle cx="24" cy="7.5" r="2.5" />
-            <circle cx="24" cy="24.5" r="2.5" />
-          </svg>
-          <span>Agent Hooks Protocol</span>
-        </a>
-        <p>An open protocol for interoperable agent runtime hooks.</p>
+      <div class="site-footer-inner">
+        <div class="footer-about">
+          <a class="brand" href="/">
+            <Logo />
+            <span class="brand-name">Agent Hooks Protocol</span>
+          </a>
+          <p>
+            An open, vendor-neutral protocol for runtime control hooks in AI agent harnesses.
+            All current protocol artifacts are Working Drafts.
+          </p>
+        </div>
+        <nav class="footer-links" aria-label="Footer">
+          <a href={SPEC_URL}>Canonical specification</a>
+          <a href="https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/CONTRIBUTING.md">Contributing</a>
+          <a href="https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/GOVERNANCE.md">Governance</a>
+          <a href="https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/SECURITY.md">Security</a>
+        </nav>
+        <p class="footer-status">AHP v0.1 · Working Draft (0.1.0-draft.1) · Apache-2.0</p>
       </div>
-      <div class="footer-links">
-        <a href="https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/spec/working-draft.md">Specification</a>
-        <a href="https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/CONTRIBUTING.md">Contribute</a>
-        <a href="https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/GOVERNANCE.md">Governance</a>
-      </div>
-      <p class="footer-status">AHP v0.1 · Working Draft</p>
     </footer>
   </body>
 </html>

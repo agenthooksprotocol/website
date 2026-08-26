@@ -1,0 +1,12 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<span class:list={['logo-mark', className]} aria-hidden="true">
+  <img class="logo-light" src="/mark-light.svg" alt="" width="26" height="26" />
+  <img class="logo-dark" src="/mark-dark.svg" alt="" width="26" height="26" />
+</span>

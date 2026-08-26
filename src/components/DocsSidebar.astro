@@ -1,0 +1,26 @@
+---
+import { docsNav } from '../config/nav';
+
+const pathname = Astro.url.pathname.endsWith('/')
+  ? Astro.url.pathname
+  : `${Astro.url.pathname}/`;
+---
+
+<nav class="docs-nav" aria-label="Documentation">
+  {
+    docsNav.map((section) => (
+      <div class="docs-nav-section">
+        <p class="docs-nav-title">{section.title}</p>
+        <ul>
+          {section.items.map((item) => (
+            <li>
+              <a href={item.href} aria-current={pathname === item.href ? 'page' : undefined}>
+                {item.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</nav>

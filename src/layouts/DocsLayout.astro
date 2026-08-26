@@ -1,0 +1,94 @@
+---
+import Layout from './Layout.astro';
+import DocsSidebar from '../components/DocsSidebar.astro';
+import { flatDocsNav, SPEC_URL } from '../config/nav';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+const { frontmatter, headings = [] } = Astro.props as {
+  frontmatter: { title: string; description?: string };
+  headings?: Heading[];
+};
+
+const pathname = Astro.url.pathname.endsWith('/')
+  ? Astro.url.pathname
+  : `${Astro.url.pathname}/`;
+
+const index = flatDocsNav.findIndex((item) => item.href === pathname);
+const prev = index > 0 ? flatDocsNav[index - 1] : null;
+const next = index >= 0 && index < flatDocsNav.length - 1 ? flatDocsNav[index + 1] : null;
+const toc = headings.filter((heading) => heading.depth === 2);
+---
+
+<Layout title={`${frontmatter.title} – Agent Hooks Protocol`} description={frontmatter.description}>
+  <div class="docs-shell">
+    <details class="docs-nav-mobile">
+      <summary>Documentation menu</summary>
+      <DocsSidebar />
+    </details>
+
+    <aside class="docs-sidebar">
+      <DocsSidebar />
+    </aside>
+
+    <article class="docs-article">
+      <header class="docs-article-header">
+        <h1>{frontmatter.title}</h1>
+        {frontmatter.description && <p class="docs-lead">{frontmatter.description}</p>}
+      </header>
+
+      <div class="docs-prose">
+        <slot />
+      </div>
+
+      <footer class="docs-article-footer">
+        <p class="docs-canonical-note">
+          This page is an informative guide. The
+          <a href={SPEC_URL}>canonical Working Draft specification</a> on GitHub is the
+          normative source and takes precedence over this site.
+        </p>
+        <nav class="docs-pagination" aria-label="Documentation pagination">
+          {
+            prev ? (
+              <a class="pagination-link prev" href={prev.href}>
+                <span class="pagination-label">Previous</span>
+                <span class="pagination-title">{prev.title}</span>
+              </a>
+            ) : (
+              <span />
+            )
+          }
+          {
+            next && (
+              <a class="pagination-link next" href={next.href}>
+                <span class="pagination-label">Next</span>
+                <span class="pagination-title">{next.title}</span>
+              </a>
+            )
+          }
+        </nav>
+      </footer>
+    </article>
+
+    <aside class="docs-toc">
+      {
+        toc.length > 1 && (
+          <nav aria-label="On this page">
+            <p class="docs-toc-title">On this page</p>
+            <ul>
+              {toc.map((heading) => (
+                <li>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+    </aside>
+  </div>
+</Layout>
