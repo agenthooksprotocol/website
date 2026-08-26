@@ -1,0 +1,176 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Open protocol · v0.1 Working Draft</p>
+      <h1>Runtime control, <span>without lock-in.</span></h1>
+      <p>
+        Agent Hooks Protocol gives agent harnesses a vendor-neutral way to ask external middleware
+        for a bounded decision before an operation continues.
+      </p>
+      <div class="button-row">
+        <a class="button" href="https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/spec/working-draft.md">
+          Read the specification <span aria-hidden="true">→</span>
+        </a>
+        <a class="button secondary" href="#protocol">Explore the protocol</a>
+      </div>
+    </div>
+
+    <div class="protocol-window" aria-label="Agent Hooks Protocol flow diagram">
+      <div class="window-bar">
+        <div class="window-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="status-pill">interceptor active</span>
+      </div>
+      <div class="flow">
+        <div class="flow-node">
+          <p class="flow-label">Agent harness <span>runtime</span></p>
+        </div>
+        <div class="flow-node accent">
+          <p class="flow-label">hooks/intercept <span>tool.before</span></p>
+        </div>
+        <div class="flow-node">
+          <p class="flow-label">Control backend <span>policy · DLP · approval</span></p>
+        </div>
+        <div class="flow-results">
+          <div class="result allow">effects: []</div>
+          <div class="result deny">effect: deny</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="protocol">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Why AHP</p>
+        <h2>One control plane. Any harness.</h2>
+      </div>
+      <p>
+        Hook systems disagree on events, payloads, ordering, timeouts, and failure behavior. AHP
+        standardizes the boundary between the harness and external runtime-control middleware.
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <article class="feature-card">
+        <div class="card-icon" aria-hidden="true">01</div>
+        <h3>Portable admission control</h3>
+        <p>Inspect a canonical event before execution and return an explicit, bounded control effect.</p>
+      </article>
+      <article class="feature-card">
+        <div class="card-icon" aria-hidden="true">02</div>
+        <h3>Deterministic composition</h3>
+        <p>Define interceptor order, deadlines, failure policy, and retry identity without vendor ambiguity.</p>
+      </article>
+      <article class="feature-card">
+        <div class="card-icon" aria-hidden="true">03</div>
+        <h3>Implementation neutral</h3>
+        <p>Connect over JSON-RPC using stdio or HTTP, with portable registration and capability discovery.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">How it works</p>
+        <h2>A small, explicit boundary.</h2>
+      </div>
+      <p>
+        The harness remains the execution and security boundary. AHP gives external middleware one
+        interoperable place to evaluate an operation before it runs.
+      </p>
+    </div>
+
+    <div class="steps">
+      <article class="step">
+        <span class="step-number">01 / Capture</span>
+        <h3>Create a canonical event</h3>
+        <p>The harness describes the session, tool call, stable identity, and effects it can enforce.</p>
+      </article>
+      <article class="step">
+        <span class="step-number">02 / Evaluate</span>
+        <h3>Ask configured backends</h3>
+        <p>Policy engines, scanners, and approval services evaluate interceptors in deterministic order.</p>
+      </article>
+      <article class="step">
+        <span class="step-number">03 / Enforce</span>
+        <h3>Apply the result</h3>
+        <p>The harness validates the response, enforces a denial, or continues through its own controls.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section code-section">
+    <div>
+      <p class="eyebrow">Designed for implementers</p>
+      <h2>Plain JSON-RPC. Precise semantics.</h2>
+      <p class="lead">
+        AHP keeps the minimum conformance surface small: one request method, explicit capabilities,
+        stable identifiers, and one unambiguous v0.1 effect.
+      </p>
+      <div class="button-row">
+        <a class="button secondary" href="/docs/">Explore the docs <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+
+    <div class="code-card">
+      <div class="code-bar"><span>tool-before.json</span><span>JSON-RPC 2.0</span></div>
+      <pre aria-label="AHP intercept request example"><code>&#123;
+  <span class="code-key">"jsonrpc"</span>: <span class="code-string">"2.0"</span>,
+  <span class="code-key">"id"</span>: <span class="code-string">"evt_01JQ8Z..."</span>,
+  <span class="code-key">"method"</span>: <span class="code-string">"hooks/intercept"</span>,
+  <span class="code-key">"params"</span>: &#123;
+    <span class="code-key">"protocolVersion"</span>: <span class="code-string">"0.1"</span>,
+    <span class="code-key">"event"</span>: &#123;
+      <span class="code-key">"type"</span>: <span class="code-string">"tool.before"</span>,
+      <span class="code-key">"tool"</span>: &#123;
+        <span class="code-key">"name"</span>: <span class="code-string">"Bash"</span>,
+        <span class="code-key">"kind"</span>: <span class="code-string">"shell"</span>,
+        <span class="code-key">"input"</span>: &#123;
+          <span class="code-key">"command"</span>: <span class="code-string">"git push --force"</span>
+        &#125;
+      &#125;
+    &#125;,
+    <span class="code-key">"capabilities"</span>: &#123;
+      <span class="code-key">"effects"</span>: [<span class="code-string">"deny"</span>]
+    &#125;
+  &#125;
+&#125;</code></pre>
+    </div>
+  </section>
+
+  <section class="section boundaries">
+    <div>
+      <p class="eyebrow">Fits the ecosystem</p>
+      <h2>Control is a distinct protocol concern.</h2>
+      <p class="lead">
+        AHP complements existing standards. It does not replace tool connectivity, client-agent
+        communication, agent collaboration, or observability.
+      </p>
+    </div>
+    <div class="protocol-list">
+      <div class="protocol-row"><strong>MCP</strong><p>Connects agents and clients to tools, resources, and context providers.</p></div>
+      <div class="protocol-row"><strong>ACP</strong><p>Connects editors and clients to coding agents.</p></div>
+      <div class="protocol-row"><strong>A2A</strong><p>Connects agents to other agents.</p></div>
+      <div class="protocol-row"><strong>AHP</strong><p>Connects an agent harness to external runtime-control middleware.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="cta">
+      <p class="eyebrow">Open from the start</p>
+      <h2>Help shape the control layer for agent runtimes.</h2>
+      <p>
+        AHP is an early Working Draft. Review the specification, test the artifacts, and bring your
+        implementation experience to the public process.
+      </p>
+      <a class="button" href="https://github.com/agenthooksprotocol/agent-hooks-protocol">
+        Join on GitHub <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </section>
+</Layout>

@@ -1,0 +1,23 @@
+{
+  "name": "@agenthooksprotocol/website",
+  "description": "The website for the Agent Hooks Protocol.",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.2.7"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}
