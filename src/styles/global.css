@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fira+Code:wght@400;500&display=swap');
 
 :root {
   --bg: #ffffff;
@@ -13,8 +13,8 @@
   --accent-soft: rgba(75, 76, 214, 0.08);
   --warn-bg: #fdf6e8;
   --warn-line: #e8d9b0;
-  --mono: 'DM Mono', ui-monospace, SFMono-Regular, Consolas, monospace;
-  --sans: 'Manrope', system-ui, sans-serif;
+  --mono: 'Fira Code', ui-monospace, SFMono-Regular, Consolas, monospace;
+  --sans: 'Atkinson Hyperlegible', system-ui, sans-serif;
   --max-width: 1280px;
   --header-height: 60px;
 }
@@ -66,6 +66,7 @@ a:hover {
 code,
 pre {
   font-family: var(--mono);
+  font-variant-ligatures: none;
 }
 
 .skip-link {
