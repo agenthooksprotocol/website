@@ -3,7 +3,6 @@ name: Sync protocol docs
 on:
   repository_dispatch:
     types: [sync-protocol-docs]
-  workflow_call:
   workflow_dispatch:
 
 permissions:
