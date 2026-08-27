@@ -1,0 +1,73 @@
+name: Sync protocol docs
+
+on:
+  repository_dispatch:
+    types: [sync-protocol-docs]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-protocol-docs
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Refresh documentation mirrors
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out protocol sources
+        uses: actions/checkout@v5
+        with:
+          repository: agenthooksprotocol/agent-hooks-protocol
+          ref: main
+          path: protocol
+          persist-credentials: false
+
+      - name: Check out website
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: website
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Synchronize and publish docs
+        working-directory: website
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            npm ci
+            npm run sync:protocol-docs -- ../protocol
+            npm run build
+            git add -A src/pages/docs \
+              src/generated/protocol-docs.ts \
+              public/protocol \
+              public/social-card.svg \
+              public/social-card.png
+
+            if git diff --cached --quiet; then
+              echo "Protocol documentation is already up to date."
+              exit 0
+            fi
+
+            git commit -m "docs: sync protocol project docs"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+
+            echo "::warning::Website main changed during sync; retrying ($attempt/3)."
+          done
+
+          echo "::error::Could not push synchronized docs after 3 attempts."
+          exit 1

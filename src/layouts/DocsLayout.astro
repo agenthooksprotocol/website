@@ -1,7 +1,7 @@
 ---
 import Layout from './Layout.astro';
 import DocsSidebar from '../components/DocsSidebar.astro';
-import { flatDocsNav, SPEC_URL } from '../config/nav';
+import { flatDocsNav, protocolMetadata } from '../config/nav';
 
 interface Heading {
   depth: number;
@@ -10,7 +10,7 @@ interface Heading {
 }
 
 const { frontmatter, headings = [] } = Astro.props as {
-  frontmatter: { title: string; description?: string };
+  frontmatter: { title: string; description?: string; sourceUrl?: string };
   headings?: Heading[];
 };
 
@@ -24,7 +24,10 @@ const next = index >= 0 && index < flatDocsNav.length - 1 ? flatDocsNav[index + 
 const toc = headings.filter((heading) => heading.depth === 2);
 ---
 
-<Layout title={`${frontmatter.title} – Agent Hooks Protocol`} description={frontmatter.description}>
+<Layout
+  title={`${frontmatter.title} – ${protocolMetadata.projectName}`}
+  description={frontmatter.description}
+>
   <div class="docs-shell">
     <details class="docs-nav-mobile">
       <summary>Documentation menu</summary>
@@ -47,9 +50,8 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
       <footer class="docs-article-footer">
         <p class="docs-canonical-note">
-          This page is an informative guide. The
-          <a href={SPEC_URL}>canonical Working Draft specification</a> on GitHub is the
-          normative source and takes precedence over this site.
+          This page is synchronized from the{' '}
+          <a href={frontmatter.sourceUrl}>canonical source document</a> on GitHub.
         </p>
         <nav class="docs-pagination" aria-label="Documentation pagination">
           {

@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "sync:protocol-docs": "node scripts/sync-protocol-docs.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -21,6 +22,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "sharp": "^0.35.4",
     "wrangler": "^4.126.0"
   }
 }
