@@ -91,4 +91,4 @@ cargo run --locked --manifest-path tools/sdk-codegen/Cargo.toml -- \
   generate --revision draft --language typescript --output /tmp/ahp.generated.ts
 ```
 
-The structural codecs preserve unknown JSON but do not replace canonical Draft 2020-12 validation. See [`tools/sdk-codegen/README.md`](/docs/tools/sdk-codegen/).
+The structural codecs preserve unknown JSON. See [`tools/sdk-codegen/README.md`](/docs/tools/sdk-codegen/) for their compatibility contract.
