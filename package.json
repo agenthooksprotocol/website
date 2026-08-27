@@ -22,6 +22,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "sharp": "^0.35.4",
     "wrangler": "^4.126.0"
   }
 }
