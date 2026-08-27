@@ -1,178 +1,24 @@
 ---
-import { Code } from 'astro:components';
 import Layout from '../layouts/Layout.astro';
-import { SPEC_REPO, SPEC_URL } from '../config/nav';
-
-const interceptRequest = `{
-  "jsonrpc": "2.0",
-  "id": "evt_01JQ8Z2Y6YR0H8N7Q2M3X4V5W6",
-  "method": "hooks/intercept",
-  "params": {
-    "protocolVersion": "0.1",
-    "event": {
-      "type": "tool.before",
-      "session": { "id": "sess_123" },
-      "tool": {
-        "callId": "call_456",
-        "name": "Bash",
-        "kind": "shell",
-        "input": { "command": "git push --force" }
-      }
-    },
-    "capabilities": { "effects": ["deny"] }
-  }
-}`;
+import { GITHUB_ORG, SPEC_URL, protocolMetadata } from '../config/nav';
 ---
 
 <Layout>
   <div class="home">
     <section class="home-hero">
-      <p class="eyebrow">Open protocol · v0.1 Working Draft</p>
-      <h1>Runtime control hooks for AI agent harnesses</h1>
-      <p>
-        The Agent Hooks Protocol (AHP) is a vendor-neutral interface through which an agent
-        harness asks external middleware — policy engines, DLP scanners, approval services —
-        for a bounded decision before an operation continues. One event model, explicit
-        effects, deterministic composition, and portable stdio and HTTP bindings.
+      <p class="eyebrow">
+        {protocolMetadata.status} · {protocolMetadata.protocolVersion}
       </p>
+      <h1>{protocolMetadata.projectName}</h1>
+      <p>{protocolMetadata.projectDescription}</p>
       <div class="button-row">
-        <a class="button" href="/docs/">Get started <span aria-hidden="true">→</span></a>
+        <a class="button" href="/docs/">Documentation <span aria-hidden="true">→</span></a>
         <a class="button secondary" href={SPEC_URL}>
-          Read the specification <span aria-hidden="true">↗</span>
+          Specification <span aria-hidden="true">→</span>
         </a>
-      </div>
-    </section>
-
-    <section class="home-section" aria-labelledby="how-heading">
-      <h2 id="how-heading">An admission-control boundary for agent operations</h2>
-      <p>
-        Before a tool call executes, the harness emits a canonical <code>tool.before</code>
-        event through <code>hooks/intercept</code>. Each configured backend returns either no
-        effect or one explicit <code>deny</code>. The harness stays the execution and security
-        boundary: it enforces deadlines, failure policy, and its own permissions.
-      </p>
-      <figure class="flow-figure">
-        <pre aria-label="AHP interception flow">
-Agent requests a tool call
-            │
-            ▼
-Harness creates a canonical tool.before event
-            │
-            ▼
-Configured AHP backends evaluate it in order
-            │
-            ├── deny ──▶ Harness stops the tool call
-            │
-            └── no effect from every backend
-                         │
-                         ▼
-Harness applies its own permissions and sandbox
-            │
-            ▼
-Tool executes</pre>
-        <figcaption>
-          The minimum v0.1 conformance path: <code>tool.before</code> interception with a
-          single unambiguous <code>deny</code> effect.
-        </figcaption>
-      </figure>
-    </section>
-
-    <section class="home-section" aria-labelledby="wire-heading">
-      <h2 id="wire-heading">Plain JSON-RPC on the wire</h2>
-      <p>
-        AHP uses UTF-8 JSON-RPC 2.0 over newline-delimited stdio or bounded HTTP POST. Every
-        request is self-describing: it carries the protocol version and the exact effects the
-        harness can enforce, so backends never infer behavior from a vendor name.
-      </p>
-      <Code
-        code={interceptRequest}
-        lang="json"
-        themes={{ light: 'github-light', dark: 'github-dark' }}
-      />
-    </section>
-
-    <section class="home-section" aria-labelledby="docs-heading">
-      <h2 id="docs-heading">Explore the documentation</h2>
-      <p>Informative guides to the Working Draft, organized by protocol concern.</p>
-      <div class="topic-grid">
-        <a class="topic-card" href="/docs/architecture/">
-          <h3>Architecture</h3>
-          <p>Roles, the JSON-RPC protocol model, versioning, and unknown-field rules.</p>
+        <a class="button secondary" href={GITHUB_ORG}>
+          GitHub <span aria-hidden="true">↗</span>
         </a>
-        <a class="topic-card" href="/docs/events/">
-          <h3>Events</h3>
-          <p>The canonical envelope, session and tool identity, and the event lifecycle.</p>
-        </a>
-        <a class="topic-card" href="/docs/effects/">
-          <h3>Capabilities and effects</h3>
-          <p>Explicit capability advertisement, the <code>deny</code> effect, and why there is no <code>allow</code>.</p>
-        </a>
-        <a class="topic-card" href="/docs/composition/">
-          <h3>Composition and failure</h3>
-          <p>Deterministic interceptor ordering, deadlines, fail-open and fail-closed policy.</p>
-        </a>
-        <a class="topic-card" href="/docs/transports/">
-          <h3>Transports</h3>
-          <p>The stdio and HTTP bindings, framing rules, TLS, and bearer authentication.</p>
-        </a>
-        <a class="topic-card" href="/docs/registration/">
-          <h3>Registration</h3>
-          <p>The portable document that configures backends, subscriptions, and failure policy.</p>
-        </a>
-      </div>
-    </section>
-
-    <section class="home-section" aria-labelledby="ecosystem-heading">
-      <h2 id="ecosystem-heading">Where AHP fits</h2>
-      <p>
-        AHP complements existing agent standards; it does not replace tool connectivity,
-        client–agent communication, agent collaboration, or observability.
-      </p>
-      <table class="ecosystem-table">
-        <thead>
-          <tr>
-            <th scope="col">Protocol</th>
-            <th scope="col">Connects</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row"><a href="https://modelcontextprotocol.io/">MCP</a></th>
-            <td>Agents and clients to tools, resources, and context providers.</td>
-          </tr>
-          <tr>
-            <th scope="row"><a href="https://agentclientprotocol.com/">ACP</a></th>
-            <td>Editors and clients to coding agents.</td>
-          </tr>
-          <tr>
-            <th scope="row">A2A</th>
-            <td>Agents to other agents.</td>
-          </tr>
-          <tr class="highlight">
-            <th scope="row">AHP</th>
-            <td>An agent harness to external runtime-control middleware.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <section class="home-section" aria-labelledby="status-heading">
-      <h2 id="status-heading">Status: Working Draft</h2>
-      <div class="status-callout">
-        <p>
-          AHP is at an early stage. All current protocol artifacts are Working Drafts
-          (<code>0.1.0-draft.1</code>) and are not a stable compatibility commitment. The
-          <a href={SPEC_URL}>canonical specification</a> in the
-          <a href={SPEC_REPO}>agent-hooks-protocol repository</a> is the normative source;
-          this site is an informative companion.
-        </p>
-        <p>
-          The draft ships with <a href={`${SPEC_REPO}/tree/main/schemas`}>versioned JSON Schemas</a>,
-          <a href={`${SPEC_REPO}/tree/main/fixtures`}>golden fixtures</a>,
-          <a href={`${SPEC_REPO}/tree/main/conformance`}>conformance profiles</a>, and a public
-          <a href={`${SPEC_REPO}/blob/main/governance/AHP-PROCESS.md`}>proposal process</a>.
-          Implementation experience and review feedback are welcome.
-        </p>
       </div>
     </section>
   </div>
