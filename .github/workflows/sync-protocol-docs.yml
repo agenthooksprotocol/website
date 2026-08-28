@@ -52,9 +52,7 @@ jobs:
             npm run build
             git add -A src/pages/docs \
               src/generated/protocol-docs.ts \
-              public/protocol \
-              public/social-card.svg \
-              public/social-card.png
+              public/protocol
 
             if git diff --cached --quiet; then
               echo "Protocol documentation is already up to date."

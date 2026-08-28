@@ -31,6 +31,8 @@ For a Cloudflare Pages project, use these equivalent settings:
 
 ## Protocol sources
 
-The front page is maintained in this repository. All pages under `/docs` are generated from public Markdown in the [`agent-hooks-protocol`](https://github.com/agenthooksprotocol/agent-hooks-protocol) repository. This includes the complete specification tree, conformance profiles, governance and project policies, artifact guides, and tooling documentation. The same generator builds the social card from canonical project metadata. Do not edit generated documentation or social-card assets in this repository. Update the protocol repository and regenerate locally with `npm run sync:protocol-docs`.
+The front page is maintained in this repository. All pages under `/docs` are generated from public Markdown in the [`agent-hooks-protocol`](https://github.com/agenthooksprotocol/agent-hooks-protocol) repository. This includes the complete specification tree, conformance profiles, governance and project policies, artifact guides, and tooling documentation. Do not edit generated documentation in this repository. Update the protocol repository and regenerate locally with `npm run sync:protocol-docs`.
+
+The Astro build prerenders a dedicated social card for every page at a content-addressed URL. Social-card images are build outputs and must not be added to `public`.
 
 Every push to `agent-hooks-protocol/main` dispatches this repository's `sync-protocol-docs.yml` workflow. Configure the `agent-hooks-protocol` Actions variable `WEBSITE_SYNC_APP_ID` and secret `WEBSITE_SYNC_APP_PRIVATE_KEY` for a GitHub App installed on `website` with **Contents: read and write** permission. The dispatcher mints a short-lived installation token and sends a `repository_dispatch` event; the website workflow then regenerates all mirrors, validates the Astro build, and commits changes with its own `GITHUB_TOKEN`.

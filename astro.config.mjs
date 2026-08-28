@@ -1,10 +1,11 @@
 // @ts-check
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
+import { SITE_ORIGIN } from './src/config/site.ts';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://agenthooksprotocol.com',
+  site: SITE_ORIGIN,
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {
