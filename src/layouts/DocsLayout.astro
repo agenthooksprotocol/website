@@ -22,11 +22,15 @@ const index = flatDocsNav.findIndex((item) => item.href === pathname);
 const prev = index > 0 ? flatDocsNav[index - 1] : null;
 const next = index >= 0 && index < flatDocsNav.length - 1 ? flatDocsNav[index + 1] : null;
 const toc = headings.filter((heading) => heading.depth === 2);
+const documentTitle = frontmatter.title === protocolMetadata.projectName
+  ? frontmatter.title
+  : `${frontmatter.title} – ${protocolMetadata.projectName}`;
 ---
 
 <Layout
-  title={`${frontmatter.title} – ${protocolMetadata.projectName}`}
+  title={documentTitle}
   description={frontmatter.description}
+  socialTitle={frontmatter.title}
 >
   <div class="docs-shell">
     <details class="docs-nav-mobile">

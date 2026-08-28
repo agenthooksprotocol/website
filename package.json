@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/check-social-cards.mjs",
     "sync:protocol-docs": "node scripts/sync-protocol-docs.mjs",
     "preview": "astro preview",
     "astro": "astro"
