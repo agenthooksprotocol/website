@@ -1,5 +1,6 @@
 ---
 import { Code } from 'astro:components';
+import InterceptionFlow from '../components/InterceptionFlow.astro';
 import Layout from '../layouts/Layout.astro';
 import { SPEC_REPO, SPEC_URL } from '../config/nav';
 
@@ -51,30 +52,7 @@ const interceptRequest = `{
         effect or one explicit <code>deny</code>. The harness stays the execution and security
         boundary: it enforces deadlines, failure policy, and its own permissions.
       </p>
-      <figure class="flow-figure">
-        <pre aria-label="AHP interception flow">
-Agent requests a tool call
-            │
-            ▼
-Harness creates a canonical tool.before event
-            │
-            ▼
-Configured AHP backends evaluate it in order
-            │
-            ├── deny ──▶ Harness stops the tool call
-            │
-            └── no effect from every backend
-                         │
-                         ▼
-Harness applies its own permissions and sandbox
-            │
-            ▼
-Tool executes</pre>
-        <figcaption>
-          The minimum draft conformance path: <code>tool.before</code> interception with a
-          single unambiguous <code>deny</code> effect.
-        </figcaption>
-      </figure>
+      <InterceptionFlow />
     </section>
 
     <section class="home-section" aria-labelledby="wire-heading">
