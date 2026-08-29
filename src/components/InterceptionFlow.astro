@@ -1,0 +1,1047 @@
+<figure class="interception-flow" data-step="idle">
+  <div class="flow-header">
+    <div class="flow-tabs" role="tablist" aria-label="Interception outcome">
+      <button
+        class="flow-tab is-selected"
+        type="button"
+        role="tab"
+        id="flow-tab-continue"
+        aria-selected="true"
+        aria-controls="flow-panel"
+        data-scenario="continue"
+      >
+        <span class="tab-dot dot-pass" aria-hidden="true"></span> No backend denies
+      </button>
+      <button
+        class="flow-tab"
+        type="button"
+        role="tab"
+        id="flow-tab-deny"
+        aria-selected="false"
+        aria-controls="flow-panel"
+        data-scenario="deny"
+      >
+        <span class="tab-dot dot-deny" aria-hidden="true"></span> A backend denies
+      </button>
+    </div>
+    <button class="motion-toggle" type="button" aria-label="Pause the animation">Pause</button>
+  </div>
+
+  <div class="flow-progress" aria-hidden="true"><span class="flow-progress-bar"></span></div>
+
+  <div class="flow-viewport" id="flow-panel" role="tabpanel" aria-labelledby="flow-tab-continue">
+    <svg
+      class="flow-diagram"
+      viewBox="0 0 860 420"
+      role="img"
+      aria-labelledby="interception-flow-title interception-flow-description"
+    >
+      <title id="interception-flow-title">AHP interception at the harness boundary</title>
+      <desc id="interception-flow-description">
+        An agent asks its harness to run a tool. The harness evaluates each configured AHP
+        backend serially and outside its boundary. When no backend denies, the harness applies
+        its own permissions and executes the tool itself, inside its boundary. When any backend
+        denies, evaluation stops, later backends are never reached, and the tool never runs.
+      </desc>
+
+      <defs>
+        <marker id="ahp-arrow" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto">
+          <path d="M0,0 L7,3.5 L0,7 Z" class="arrow-head"></path>
+        </marker>
+        <marker id="ahp-arrow-down" markerWidth="8" markerHeight="8" refX="6.5" refY="3.5" orient="auto">
+          <path d="M0,0 L7,3.5 L0,7 Z" class="arrow-head-gate"></path>
+        </marker>
+      </defs>
+
+      <!-- Harness boundary: everything drawn inside it is owned by the harness -->
+      <g class="boundary">
+        <rect class="boundary-box" x="196" y="24" width="364" height="372" rx="18"></rect>
+        <text class="boundary-label" x="216" y="50">HARNESS · AHP CLIENT</text>
+        <text class="boundary-note" x="216" y="381">trust and execution boundary</text>
+      </g>
+
+      <!-- Agent -->
+      <g class="node agent-node">
+        <rect x="16" y="176" width="140" height="76" rx="12"></rect>
+        <text class="node-title" x="86" y="208" text-anchor="middle">Agent</text>
+        <text class="node-detail" x="86" y="229" text-anchor="middle">wants to run a tool</text>
+      </g>
+
+      <path class="link link-call" d="M156 214C186 214 186 110 224 110" marker-end="url(#ahp-arrow)"></path>
+      <circle class="pkt pkt-call" cx="0" cy="0" r="4.5"></circle>
+      <circle class="pkt pkt-reply" cx="0" cy="0" r="4.5"></circle>
+
+      <!-- Interception point (inside the harness) -->
+      <g class="node intercept-node">
+        <rect x="224" y="76" width="308" height="68" rx="12"></rect>
+        <text class="node-title" x="378" y="107" text-anchor="middle">Interception point</text>
+        <text class="node-detail" x="378" y="128" text-anchor="middle">emits tool.before · hooks/intercept</text>
+      </g>
+
+      <!-- Backends, outside the boundary -->
+      <text class="column-label" x="596" y="50">HOOK BACKENDS · AHP SERVERS</text>
+
+      <g class="backend" data-backend="1">
+        <path class="link link-hook" d="M532 110C556 110 566 98 596 98"></path>
+        <circle class="pkt pkt-out" cx="0" cy="0" r="4.5"></circle>
+        <circle class="pkt pkt-back" cx="0" cy="0" r="4.5"></circle>
+        <rect class="backend-card" x="596" y="72" width="248" height="52" rx="10"></rect>
+        <circle class="backend-badge" cx="620" cy="98" r="11"></circle>
+        <text class="backend-index" x="620" y="102" text-anchor="middle">1</text>
+        <text class="backend-name" x="642" y="103">policy engine</text>
+        <text class="backend-status" x="826" y="102" text-anchor="end"></text>
+      </g>
+
+      <g class="backend" data-backend="2">
+        <path class="link link-hook" d="M532 110C562 110 566 164 596 164"></path>
+        <circle class="pkt pkt-out" cx="0" cy="0" r="4.5"></circle>
+        <circle class="pkt pkt-back" cx="0" cy="0" r="4.5"></circle>
+        <rect class="backend-card" x="596" y="138" width="248" height="52" rx="10"></rect>
+        <circle class="backend-badge" cx="620" cy="164" r="11"></circle>
+        <text class="backend-index" x="620" y="168" text-anchor="middle">2</text>
+        <text class="backend-name" x="642" y="169">DLP scanner</text>
+        <text class="backend-status" x="826" y="168" text-anchor="end"></text>
+      </g>
+
+      <g class="backend" data-backend="3">
+        <path class="link link-hook" d="M532 110C566 110 566 230 596 230"></path>
+        <circle class="pkt pkt-out" cx="0" cy="0" r="4.5"></circle>
+        <circle class="pkt pkt-back" cx="0" cy="0" r="4.5"></circle>
+        <rect class="backend-card" x="596" y="204" width="248" height="52" rx="10"></rect>
+        <circle class="backend-badge" cx="620" cy="230" r="11"></circle>
+        <text class="backend-index" x="620" y="234" text-anchor="middle">3</text>
+        <text class="backend-name" x="642" y="235">approval</text>
+        <text class="backend-status" x="826" y="234" text-anchor="end"></text>
+      </g>
+
+      <text class="column-note" x="844" y="278" text-anchor="end">evaluated in order · stops on a deny</text>
+
+      <!-- The harness gate: its own permissions, applied after the chain -->
+      <path class="gate-line gate-line-top" d="M378 144V172"></path>
+      <text class="gate-label" x="378" y="190" text-anchor="middle">harness permissions</text>
+      <rect class="gate-leaf gate-leaf-left" x="302" y="202" width="62" height="9" rx="4.5"></rect>
+      <rect class="gate-leaf gate-leaf-right" x="392" y="202" width="62" height="9" rx="4.5"></rect>
+      <circle class="stop-pulse" cx="378" cy="206" r="17"></circle>
+      <path class="gate-line gate-line-bottom" d="M378 220V262" marker-end="url(#ahp-arrow-down)"></path>
+      <circle class="pkt pkt-exec" cx="0" cy="0" r="4.5"></circle>
+
+      <!-- Tool runtime, owned by the harness -->
+      <g class="node tool-node">
+        <rect x="224" y="268" width="308" height="88" rx="12"></rect>
+        <text class="node-title" x="378" y="300" text-anchor="middle">Tool runtime</text>
+        <text class="node-detail" x="378" y="320" text-anchor="middle">the harness runs the call itself</text>
+        <text class="tool-state state-run" x="378" y="342" text-anchor="middle">executing Bash</text>
+        <text class="tool-state state-void" x="378" y="342" text-anchor="middle">never invoked</text>
+        <circle class="exec-pulse" cx="378" cy="312" r="18"></circle>
+      </g>
+    </svg>
+  </div>
+
+  <figcaption>
+    <p class="flow-caption">
+      <span class="caption-step">1/8</span>
+      <span class="caption-text">The agent asks its harness to run a tool.</span>
+    </p>
+    <p class="flow-note">
+      Backends never execute anything — each returns either <code>no effect</code> or one
+      explicit <code>deny</code>. The harness stays the execution and security boundary.
+    </p>
+  </figcaption>
+</figure>
+
+<script>
+  type Mark = 'clear' | 'deny' | 'skip';
+
+  type Step = {
+    id: string;
+    ms: number;
+    text: string;
+    backend?: number;
+    mark?: Mark;
+    status?: string;
+    add?: string[];
+  };
+
+  const SCENARIOS: Record<string, Step[]> = {
+    continue: [
+      { id: 'call', ms: 1100, text: 'The agent asks its harness to run a tool.' },
+      {
+        id: 'hook1',
+        ms: 1400,
+        backend: 1,
+        mark: 'clear',
+        status: 'no effect',
+        text: 'Backend 1 is evaluated first and returns no effect.',
+      },
+      {
+        id: 'hook2',
+        ms: 1400,
+        backend: 2,
+        mark: 'clear',
+        status: 'no effect',
+        text: 'Backend 2 follows, in registration order, and also returns no effect.',
+      },
+      {
+        id: 'hook3',
+        ms: 1400,
+        backend: 3,
+        mark: 'clear',
+        status: 'no effect',
+        text: 'Backend 3 returns no effect. The chain is complete.',
+      },
+      {
+        id: 'gate',
+        ms: 1100,
+        add: ['is-open'],
+        text: 'No backend denied, so the harness applies its own permissions.',
+      },
+      {
+        id: 'exec',
+        ms: 1400,
+        add: ['is-open', 'has-run'],
+        text: 'The harness executes the tool itself, inside its own boundary.',
+      },
+      {
+        id: 'reply',
+        ms: 1200,
+        add: ['is-open', 'has-run'],
+        text: 'The result returns to the agent.',
+      },
+      {
+        id: 'settle',
+        ms: 1400,
+        add: ['is-open', 'has-run'],
+        text: 'No effect from any backend means the call proceeds on the harness’s own terms.',
+      },
+    ],
+    deny: [
+      { id: 'call', ms: 1100, text: 'The agent asks its harness to run a tool.' },
+      {
+        id: 'hook1',
+        ms: 1400,
+        backend: 1,
+        mark: 'clear',
+        status: 'no effect',
+        text: 'Backend 1 is evaluated first and returns no effect.',
+      },
+      {
+        id: 'hook2',
+        ms: 1500,
+        backend: 2,
+        mark: 'deny',
+        status: 'deny',
+        text: 'Backend 2 returns one explicit deny.',
+      },
+      {
+        id: 'halt',
+        ms: 1300,
+        backend: 3,
+        mark: 'skip',
+        status: 'not reached',
+        text: 'Evaluation stops on the deny: backend 3 is never called.',
+      },
+      {
+        id: 'blocked',
+        ms: 1300,
+        add: ['is-blocked'],
+        text: 'The harness refuses the call at its own boundary.',
+      },
+      {
+        id: 'void',
+        ms: 1300,
+        add: ['is-blocked', 'is-void'],
+        text: 'The tool runtime is never entered. Nothing ran.',
+      },
+      {
+        id: 'replyDeny',
+        ms: 1200,
+        add: ['is-blocked', 'is-void'],
+        text: 'The harness returns the denial to the agent.',
+      },
+      {
+        id: 'settle',
+        ms: 1400,
+        add: ['is-blocked', 'is-void'],
+        text: 'A single deny anywhere in the chain stops the operation.',
+      },
+    ],
+  };
+
+  const STATE_CLASSES = ['is-open', 'has-run', 'is-blocked', 'is-void'];
+  const MARK_CLASSES = ['is-clear', 'is-deny', 'is-skip'];
+
+  const root = document.querySelector<HTMLElement>('.interception-flow');
+
+  if (root) {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('.flow-tab'));
+    const panel = root.querySelector<HTMLElement>('#flow-panel');
+    const toggle = root.querySelector<HTMLButtonElement>('.motion-toggle');
+    const bar = root.querySelector<HTMLElement>('.flow-progress-bar');
+    const stepEl = root.querySelector<HTMLElement>('.caption-step');
+    const textEl = root.querySelector<HTMLElement>('.caption-text');
+    const backends = Array.from(root.querySelectorAll<SVGGElement>('.backend'));
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    let scenario: keyof typeof SCENARIOS = 'continue';
+    let index = 0;
+    let timer = 0;
+    let paused = false;
+    let pinned = false;
+
+    const steps = () => SCENARIOS[scenario];
+
+    const clearMarks = () => {
+      for (const group of backends) {
+        group.classList.remove(...MARK_CLASSES, 'is-active');
+        const status = group.querySelector<SVGTextElement>('.backend-status');
+        if (status) status.textContent = '';
+      }
+    };
+
+    const reset = () => {
+      root.classList.remove(...STATE_CLASSES);
+      clearMarks();
+    };
+
+    const applyStep = (step: Step, animate: boolean) => {
+      root.dataset.step = step.id;
+      root.classList.remove(...STATE_CLASSES);
+      for (const cls of step.add ?? []) root.classList.add(cls);
+
+      for (const group of backends) group.classList.remove('is-active');
+
+      if (step.backend) {
+        const group = backends[step.backend - 1];
+        const status = group?.querySelector<SVGTextElement>('.backend-status');
+        if (group && step.mark) {
+          group.classList.add(`is-${step.mark}`);
+          if (animate) {
+            group.getBoundingClientRect();
+            group.classList.add('is-active');
+          }
+        }
+        if (status && step.status) status.textContent = step.status;
+      }
+
+      if (stepEl) stepEl.textContent = `${index + 1}/${steps().length}`;
+      if (textEl) textEl.textContent = step.text;
+      if (bar) bar.style.width = `${((index + 1) / steps().length) * 100}%`;
+    };
+
+    const showFinalState = () => {
+      const list = steps();
+      reset();
+      for (const step of list) {
+        if (step.backend && step.mark) {
+          const group = backends[step.backend - 1];
+          group?.classList.add(`is-${step.mark}`);
+          const status = group?.querySelector<SVGTextElement>('.backend-status');
+          if (status && step.status) status.textContent = step.status;
+        }
+      }
+      index = list.length - 1;
+      applyStep(list[index], false);
+    };
+
+    const stop = () => {
+      window.clearTimeout(timer);
+      timer = 0;
+    };
+
+    const run = () => {
+      stop();
+      applyStep(steps()[index], true);
+      timer = window.setTimeout(() => {
+        index += 1;
+        if (index >= steps().length) {
+          index = 0;
+          if (!pinned) {
+            scenario = scenario === 'continue' ? 'deny' : 'continue';
+            syncTabs();
+          }
+          reset();
+        }
+        run();
+      }, steps()[index].ms);
+    };
+
+    const syncTabs = () => {
+      for (const tab of tabs) {
+        const selected = tab.dataset.scenario === scenario;
+        tab.classList.toggle('is-selected', selected);
+        tab.setAttribute('aria-selected', String(selected));
+        if (selected) panel?.setAttribute('aria-labelledby', tab.id);
+      }
+      root.dataset.scenario = scenario;
+    };
+
+    const start = () => {
+      if (reduced.matches) {
+        stop();
+        showFinalState();
+        return;
+      }
+      index = 0;
+      reset();
+      run();
+    };
+
+    for (const tab of tabs) {
+      tab.addEventListener('click', () => {
+        const next = tab.dataset.scenario as keyof typeof SCENARIOS;
+        if (!next || next === scenario) return;
+        pinned = true;
+        scenario = next;
+        syncTabs();
+        if (paused) {
+          paused = false;
+          root.classList.remove('is-paused');
+          if (toggle) toggle.textContent = 'Pause';
+        }
+        start();
+      });
+    }
+
+    toggle?.addEventListener('click', () => {
+      paused = !paused;
+      root.classList.toggle('is-paused', paused);
+      toggle.textContent = paused ? 'Play' : 'Pause';
+      toggle.setAttribute('aria-label', paused ? 'Play the animation' : 'Pause the animation');
+      if (paused) stop();
+      else run();
+    });
+
+    reduced.addEventListener('change', () => {
+      if (reduced.matches) {
+        stop();
+        showFinalState();
+      } else {
+        start();
+      }
+    });
+
+    syncTabs();
+    start();
+  }
+</script>
+
+<style>
+  .interception-flow {
+    --pass: #1f7a55;
+    --deny: #b8434f;
+    --pass-soft: color-mix(in srgb, var(--pass) 12%, transparent);
+    --deny-soft: color-mix(in srgb, var(--deny) 12%, transparent);
+    margin: 0;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--bg-soft);
+  }
+
+  :root[data-theme='dark'] .interception-flow {
+    --pass: #5cc294;
+    --deny: #ef8b95;
+  }
+
+  /* Header */
+  .flow-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px 10px 10px;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+  }
+
+  .flow-tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg);
+  }
+
+  .flow-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 13px;
+    border: 0;
+    border-radius: 999px;
+    color: var(--muted);
+    background: transparent;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition:
+      color 0.18s ease,
+      background 0.18s ease;
+  }
+
+  .flow-tab:hover {
+    color: var(--ink);
+  }
+
+  .flow-tab.is-selected {
+    color: var(--ink);
+    background: var(--bg-inset);
+  }
+
+  .flow-tab:focus-visible,
+  .motion-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .tab-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: none;
+    background: currentColor;
+    opacity: 0.35;
+    transition:
+      opacity 0.18s ease,
+      box-shadow 0.18s ease;
+  }
+
+  .is-selected .dot-pass {
+    background: var(--pass);
+    box-shadow: 0 0 0 3px var(--pass-soft);
+    opacity: 1;
+  }
+
+  .is-selected .dot-deny {
+    background: var(--deny);
+    box-shadow: 0 0 0 3px var(--deny-soft);
+    opacity: 1;
+  }
+
+  .motion-toggle {
+    padding: 4px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--muted);
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 11.5px;
+    cursor: pointer;
+  }
+
+  .motion-toggle:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .flow-progress {
+    height: 2px;
+    background: var(--line);
+  }
+
+  .flow-progress-bar {
+    display: block;
+    width: 12%;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.35s ease;
+  }
+
+  [data-scenario='deny'] .flow-progress-bar {
+    background: var(--deny);
+  }
+
+  .flow-viewport {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .flow-diagram {
+    display: block;
+    width: 100%;
+    min-width: 700px;
+    height: auto;
+    padding: 6px 0 2px;
+    font-family: var(--mono);
+  }
+
+  /* Boundary */
+  .boundary-box {
+    fill: color-mix(in srgb, var(--accent) 4%, transparent);
+    stroke: color-mix(in srgb, var(--accent) 42%, var(--line));
+    stroke-dasharray: 5 5;
+  }
+
+  .boundary-label,
+  .column-label {
+    fill: var(--muted);
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+  }
+
+  .boundary-note,
+  .column-note {
+    fill: var(--muted);
+    font-size: 10px;
+    opacity: 0.8;
+  }
+
+  /* Nodes */
+  .node rect {
+    fill: var(--bg);
+    stroke: var(--line-strong);
+  }
+
+  .intercept-node rect {
+    fill: color-mix(in srgb, var(--accent) 7%, var(--bg));
+    stroke: color-mix(in srgb, var(--accent) 55%, var(--line));
+  }
+
+  .node-title {
+    fill: var(--ink);
+    font-size: 13.5px;
+    font-weight: 500;
+  }
+
+  .node-detail {
+    fill: var(--muted);
+    font-size: 10.5px;
+  }
+
+  .tool-node rect {
+    transition:
+      fill 0.3s ease,
+      stroke 0.3s ease,
+      opacity 0.3s ease;
+  }
+
+  .has-run .tool-node rect {
+    fill: color-mix(in srgb, var(--pass) 9%, var(--bg));
+    stroke: color-mix(in srgb, var(--pass) 55%, var(--line));
+  }
+
+  .is-void .tool-node rect {
+    fill: transparent;
+    stroke: color-mix(in srgb, var(--deny) 45%, var(--line));
+    stroke-dasharray: 5 5;
+  }
+
+  .is-void .tool-node .node-title,
+  .is-void .tool-node .node-detail {
+    opacity: 0.42;
+  }
+
+  .tool-state {
+    font-size: 10.5px;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .state-run {
+    fill: var(--pass);
+  }
+
+  .state-void {
+    fill: var(--deny);
+  }
+
+  .has-run .state-run,
+  .is-void .state-void {
+    opacity: 1;
+  }
+
+  /* Links and arrows */
+  .link {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1.4;
+  }
+
+  .link-call {
+    stroke: color-mix(in srgb, var(--accent) 60%, var(--line));
+  }
+
+  .arrow-head {
+    fill: color-mix(in srgb, var(--accent) 60%, var(--line));
+  }
+
+  .arrow-head-gate {
+    fill: var(--line-strong);
+  }
+
+  .backend.is-active .link-hook {
+    stroke: var(--accent);
+  }
+
+  .backend.is-clear .link-hook {
+    stroke: color-mix(in srgb, var(--pass) 50%, var(--line));
+  }
+
+  .backend.is-deny .link-hook {
+    stroke: var(--deny);
+  }
+
+  .backend.is-skip .link-hook {
+    opacity: 0.35;
+    stroke-dasharray: 3 5;
+  }
+
+  /* Backend cards */
+  .backend-card {
+    fill: var(--bg);
+    stroke: var(--line-strong);
+    transition:
+      fill 0.25s ease,
+      stroke 0.25s ease;
+  }
+
+  .backend-badge {
+    fill: var(--bg-inset);
+    stroke: var(--line-strong);
+  }
+
+  .backend-index {
+    fill: var(--muted);
+    font-size: 10.5px;
+  }
+
+  .backend-name {
+    fill: var(--ink);
+    font-size: 12.5px;
+  }
+
+  .backend-status {
+    font-size: 10px;
+    fill: var(--muted);
+  }
+
+  .backend.is-active .backend-card {
+    stroke: var(--accent);
+    fill: color-mix(in srgb, var(--accent) 6%, var(--bg));
+  }
+
+  .backend.is-clear .backend-card {
+    stroke: color-mix(in srgb, var(--pass) 55%, var(--line));
+    fill: color-mix(in srgb, var(--pass) 7%, var(--bg));
+  }
+
+  .backend.is-clear .backend-badge {
+    fill: color-mix(in srgb, var(--pass) 16%, var(--bg));
+    stroke: color-mix(in srgb, var(--pass) 45%, var(--line));
+  }
+
+  .backend.is-clear .backend-status {
+    fill: var(--pass);
+  }
+
+  .backend.is-deny .backend-card {
+    stroke: var(--deny);
+    fill: color-mix(in srgb, var(--deny) 9%, var(--bg));
+  }
+
+  .backend.is-deny .backend-badge {
+    fill: color-mix(in srgb, var(--deny) 18%, var(--bg));
+    stroke: var(--deny);
+  }
+
+  .backend.is-deny .backend-status,
+  .backend.is-deny .backend-index {
+    fill: var(--deny);
+  }
+
+  .backend.is-skip .backend-card,
+  .backend.is-skip .backend-badge,
+  .backend.is-skip .backend-name,
+  .backend.is-skip .backend-index {
+    opacity: 0.38;
+  }
+
+  .backend.is-skip .backend-status {
+    opacity: 0.8;
+    font-style: italic;
+  }
+
+  /* Gate */
+  .gate-line {
+    fill: none;
+    stroke: var(--line-strong);
+    stroke-width: 1.4;
+    transition: stroke 0.3s ease;
+  }
+
+  .gate-label {
+    fill: var(--muted);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  .gate-leaf {
+    fill: var(--line-strong);
+    transition:
+      transform 0.45s cubic-bezier(0.32, 0.72, 0.24, 1),
+      fill 0.3s ease;
+  }
+
+  .is-open .gate-leaf {
+    fill: var(--pass);
+  }
+
+  .is-open .gate-leaf-left {
+    transform: translateX(-26px);
+  }
+
+  .is-open .gate-leaf-right {
+    transform: translateX(26px);
+  }
+
+  .is-open .gate-line,
+  .has-run .gate-line {
+    stroke: color-mix(in srgb, var(--pass) 55%, var(--line));
+  }
+
+  .is-blocked .gate-leaf {
+    fill: var(--deny);
+  }
+
+  .is-blocked .gate-leaf-left {
+    transform: translateX(14px);
+  }
+
+  .is-blocked .gate-leaf-right {
+    transform: translateX(-14px);
+  }
+
+  .is-blocked .gate-line-bottom {
+    opacity: 0.3;
+    stroke-dasharray: 4 6;
+  }
+
+  .stop-pulse {
+    fill: none;
+    stroke: var(--deny);
+    stroke-width: 2;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .is-blocked .stop-pulse {
+    animation: ring 900ms ease-out 2;
+  }
+
+  .exec-pulse {
+    fill: none;
+    stroke: var(--pass);
+    stroke-width: 2;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  [data-step='exec'] .exec-pulse {
+    animation: ring 900ms ease-out 1.05s 1;
+  }
+
+  /* Packets */
+  .pkt {
+    opacity: 0;
+    offset-rotate: 0deg;
+  }
+
+  .pkt-call,
+  .pkt-reply {
+    fill: var(--accent);
+    offset-path: path('M156 214C186 214 186 110 224 110');
+  }
+
+  .pkt-exec {
+    fill: var(--pass);
+    offset-path: path('M378 144V300');
+  }
+
+  .backend[data-backend='1'] .pkt {
+    offset-path: path('M532 110C556 110 566 98 596 98');
+  }
+
+  .backend[data-backend='2'] .pkt {
+    offset-path: path('M532 110C562 110 566 164 596 164');
+  }
+
+  .backend[data-backend='3'] .pkt {
+    offset-path: path('M532 110C566 110 566 230 596 230');
+  }
+
+  .pkt-out {
+    fill: var(--accent);
+  }
+
+  .is-clear .pkt-back {
+    fill: var(--pass);
+  }
+
+  .is-deny .pkt-back {
+    fill: var(--deny);
+  }
+
+  [data-step='call'] .pkt-call {
+    animation: send 850ms cubic-bezier(0.4, 0, 0.3, 1) both;
+  }
+
+  [data-step='reply'] .pkt-reply {
+    animation: send-back 850ms cubic-bezier(0.4, 0, 0.3, 1) both;
+  }
+
+  [data-step='reply'] .pkt-reply {
+    fill: var(--pass);
+  }
+
+  [data-step='replyDeny'] .pkt-reply {
+    fill: var(--deny);
+    animation: send-back 850ms cubic-bezier(0.4, 0, 0.3, 1) both;
+  }
+
+  .backend.is-active:not(.is-skip) .pkt-out {
+    animation: send 620ms cubic-bezier(0.4, 0, 0.3, 1) both;
+  }
+
+  .backend.is-active:not(.is-skip) .pkt-back {
+    animation: send-back 620ms cubic-bezier(0.4, 0, 0.3, 1) 660ms both;
+  }
+
+  [data-step='exec'] .pkt-exec {
+    animation: send 1000ms cubic-bezier(0.4, 0, 0.3, 1) both;
+  }
+
+  .is-paused .pkt,
+  .is-paused .exec-pulse,
+  .is-paused .stop-pulse {
+    animation-play-state: paused;
+  }
+
+  @keyframes send {
+    0% {
+      opacity: 0;
+      offset-distance: 0%;
+    }
+    12%,
+    88% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      offset-distance: 100%;
+    }
+  }
+
+  @keyframes send-back {
+    0% {
+      opacity: 0;
+      offset-distance: 100%;
+    }
+    12%,
+    88% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      offset-distance: 0%;
+    }
+  }
+
+  @keyframes ring {
+    0% {
+      opacity: 0.85;
+      transform: scale(0.35);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.6);
+    }
+  }
+
+  /* Caption */
+  figcaption {
+    padding: 12px 18px 14px;
+    border-top: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+  }
+
+  .flow-caption {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0;
+    min-height: 44px;
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .caption-step {
+    flex: none;
+    padding: 1px 7px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10.5px;
+  }
+
+  .flow-note code {
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--bg-inset);
+    font-size: 0.9em;
+  }
+
+  .flow-note {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.55;
+  }
+
+  @media (max-width: 620px) {
+    .flow-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+
+    .flow-tabs {
+      justify-content: center;
+    }
+
+    .motion-toggle {
+      align-self: flex-end;
+    }
+
+    .flow-caption {
+      min-height: 66px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pkt {
+      display: none;
+    }
+
+    .gate-leaf,
+    .backend-card,
+    .tool-node rect,
+    .flow-progress-bar {
+      transition: none;
+    }
+
+    .exec-pulse,
+    .stop-pulse {
+      animation: none;
+    }
+
+    .motion-toggle {
+      display: none;
+    }
+  }
+</style>
