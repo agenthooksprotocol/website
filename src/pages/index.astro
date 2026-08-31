@@ -28,12 +28,12 @@ const interceptRequest = `{
   <div class="home">
     <section class="home-hero">
       <p class="eyebrow">Open protocol · Working Draft</p>
-      <h1>Runtime control hooks for AI agent harnesses</h1>
+      <h1>Portable control points for agent actions</h1>
       <p>
-        The Agent Hooks Protocol (AHP) is a vendor-neutral interface through which an agent
-        harness asks external middleware — policy engines, DLP scanners, approval services —
-        for a bounded decision before an operation continues. One event model, explicit
-        effects, deterministic composition, and portable stdio and HTTP bindings.
+        The Agent Hooks Protocol (AHP) defines a vendor-neutral boundary between agent harnesses
+        and policy, security, approval, and runtime middleware. It lets a harness expose agent
+        actions to portable backends before side effects occur, without replacing the harness's
+        own permissions, approvals, or sandbox.
       </p>
       <div class="button-row">
         <a class="button" href="/docs/">Get started <span aria-hidden="true">→</span></a>
