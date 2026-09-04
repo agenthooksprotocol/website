@@ -5,7 +5,7 @@ import { env } from 'cloudflare:workers';
 import Layout from '../layouts/Layout.astro';
 import { getRoadmap, ROADMAP_SOURCE_URL, type RoadmapWorkstream } from '../lib/roadmap';
 
-const description = 'The Agent Hooks Protocol roadmap covers the work required to expand the current v0.1 draft into v1, including lifecycle events, data models, transports, SDKs, authentication, and conformance.';
+const description = 'Planned work across the Agent Hooks Protocol specification, transports, SDKs, security, and conformance.';
 let roadmap: Awaited<ReturnType<typeof getRoadmap>> | undefined;
 let loadError = false;
 
@@ -47,7 +47,6 @@ const refreshed = roadmap === undefined
 >
   <div class="roadmap">
     <header class="roadmap-header">
-      <p class="eyebrow">Shaping the protocol</p>
       <h1>Roadmap</h1>
       <p>{description}</p>
     </header>
