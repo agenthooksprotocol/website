@@ -28,6 +28,7 @@ export interface RoadmapItem {
 export interface RoadmapData {
   projectTitle: string;
   projectUrl: string;
+  updatedAt: string;
   refreshedAt: string;
   stale: boolean;
   items: RoadmapItem[];
@@ -59,6 +60,7 @@ interface GitHubProjectResponse {
     node?: {
       title?: string;
       url?: string;
+      updatedAt?: string;
       items?: {
         nodes?: GitHubProjectItem[];
         pageInfo?: { hasNextPage?: boolean; endCursor?: string };
@@ -179,6 +181,7 @@ const PROJECT_QUERY = `
       ... on ProjectV2 {
         title
         url
+        updatedAt
         items(first: 100, after: $cursor) {
           pageInfo { hasNextPage endCursor }
           nodes {
@@ -235,6 +238,7 @@ async function fetchRoadmap(privateKey: string): Promise<RoadmapData> {
   let cursor: string | null = null;
   let projectTitle = 'Agent Hooks Protocol roadmap';
   let projectUrl = ROADMAP_SOURCE_URL;
+  let projectUpdatedAt = new Date().toISOString();
 
   do {
     const response: Response = await fetch('https://api.github.com/graphql', {
@@ -249,6 +253,7 @@ async function fetchRoadmap(privateKey: string): Promise<RoadmapData> {
     if (project === undefined || project === null) throw new Error('GitHub project was not found.');
     projectTitle = project.title ?? projectTitle;
     projectUrl = project.url ?? projectUrl;
+    projectUpdatedAt = project.updatedAt ?? projectUpdatedAt;
     projectItems.push(...(project.items?.nodes ?? []));
     cursor = project.items?.pageInfo?.hasNextPage ? project.items.pageInfo.endCursor ?? null : null;
   } while (cursor !== null);
@@ -271,7 +276,14 @@ async function fetchRoadmap(privateKey: string): Promise<RoadmapData> {
     }];
   });
 
-  return { projectTitle, projectUrl, refreshedAt: new Date().toISOString(), stale: false, items };
+  return {
+    projectTitle,
+    projectUrl,
+    updatedAt: projectUpdatedAt,
+    refreshedAt: new Date().toISOString(),
+    stale: false,
+    items,
+  };
 }
 
 function cacheRequest(kind: 'fresh' | 'stale') {

@@ -462,7 +462,7 @@ pre {
 
 .roadmap-header {
   max-width: 68ch;
-  margin-bottom: 44px;
+  margin-bottom: 28px;
 }
 
 .roadmap-header h1 {
@@ -483,6 +483,19 @@ pre {
   margin: 0;
   font-size: 18px;
   line-height: 1.65;
+}
+
+.roadmap-updated {
+  margin: 0 0 44px;
+  padding: 18px 20px;
+  border: 1px solid var(--line-strong);
+  border-radius: 10px;
+  color: var(--muted);
+  background: var(--bg-soft);
+}
+
+.roadmap-updated strong {
+  color: var(--text);
 }
 
 .roadmap-groups {

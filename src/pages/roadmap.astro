@@ -5,7 +5,7 @@ import { env } from 'cloudflare:workers';
 import Layout from '../layouts/Layout.astro';
 import { getRoadmap, ROADMAP_SOURCE_URL, type RoadmapWorkstream } from '../lib/roadmap';
 
-const description = 'The path from the current Working Draft to a complete, stable Agent Hooks Protocol v1.';
+const description = 'The Agent Hooks Protocol roadmap covers the work required to expand the current v0.1 draft into v1, including lifecycle events, data models, transports, SDKs, authentication, and conformance.';
 let roadmap: Awaited<ReturnType<typeof getRoadmap>> | undefined;
 let loadError = false;
 
@@ -28,6 +28,8 @@ const workstreams: Array<{ name: RoadmapWorkstream; description: string }> = [
   { name: 'SDK', description: 'Client and server transport runtimes.' },
   { name: 'Conformance', description: 'Compatibility evidence and release qualification.' },
 ];
+const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeZone: 'UTC' });
+const lastUpdated = roadmap === undefined ? undefined : dateFormatter.format(new Date(roadmap.updatedAt));
 const refreshed = roadmap === undefined
   ? undefined
   : new Intl.DateTimeFormat('en', {
@@ -45,10 +47,16 @@ const refreshed = roadmap === undefined
 >
   <div class="roadmap">
     <header class="roadmap-header">
-      <p class="eyebrow">AHP v1 roadmap</p>
-      <h1>The road to AHP v1</h1>
+      <p class="eyebrow">Shaping the protocol</p>
+      <h1>Roadmap</h1>
       <p>{description}</p>
     </header>
+
+    {roadmap && (
+      <aside class="roadmap-updated" aria-label="Roadmap update date">
+        Last updated: <strong><time datetime={roadmap.updatedAt}>{lastUpdated}</time></strong>
+      </aside>
+    )}
 
     {
       loadError ? (
