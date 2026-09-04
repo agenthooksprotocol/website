@@ -15,6 +15,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "14.2.6",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.2.7"
   },
@@ -22,6 +23,7 @@
     "esbuild": true
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260904.1",
     "sharp": "^0.35.4",
     "wrangler": "^4.126.0"
   }

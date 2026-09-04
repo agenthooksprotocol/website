@@ -25,12 +25,19 @@ const toc = headings.filter((heading) => heading.depth === 2);
 const documentTitle = frontmatter.title === protocolMetadata.projectName
   ? frontmatter.title
   : `${frontmatter.title} – ${protocolMetadata.projectName}`;
+const description = frontmatter.description ?? protocolMetadata.projectDescription;
+const socialCardPathname = import.meta.env.DEV
+  ? '/social-card.png'
+  : await import('../lib/social-card').then(({ socialCardPath }) =>
+      socialCardPath({ title: frontmatter.title, description, pathname }),
+    );
 ---
 
 <Layout
   title={documentTitle}
   description={frontmatter.description}
   socialTitle={frontmatter.title}
+  socialCardPathname={socialCardPathname}
 >
   <div class="docs-shell">
     <details class="docs-nav-mobile">

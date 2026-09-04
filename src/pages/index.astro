@@ -3,6 +3,12 @@ import { Code } from 'astro:components';
 import Layout from '../layouts/Layout.astro';
 import { SPEC_REPO, SPEC_URL } from '../config/nav';
 
+const socialCardPathname = import.meta.env.DEV
+  ? '/social-card.png'
+  : await import('../lib/social-card').then(({ homeSocialCard, socialCardPath }) =>
+      socialCardPath(homeSocialCard),
+    );
+
 const interceptRequest = `{
   "jsonrpc": "2.0",
   "id": "evt_01JQ8Z2Y6YR0H8N7Q2M3X4V5W6",
@@ -24,7 +30,7 @@ const interceptRequest = `{
 }`;
 ---
 
-<Layout>
+<Layout socialCardPathname={socialCardPathname}>
   <div class="home">
     <section class="home-hero">
       <p class="eyebrow">Open protocol · Working Draft</p>

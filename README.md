@@ -1,6 +1,6 @@
 # Agent Hooks Protocol website
 
-The public website for [Agent Hooks Protocol](https://agenthooksprotocol.com), built as a static [Astro](https://astro.build) site.
+The public website for [Agent Hooks Protocol](https://agenthooksprotocol.com), built with [Astro](https://astro.build) for Cloudflare Workers. All routes are prerendered except the on-demand `/roadmap/` page.
 
 ## Development
 
@@ -17,17 +17,19 @@ Create a production build with:
 npm run build
 ```
 
-The static output is written to `dist/`.
+The build output is written to `dist/client/` (prerendered assets) and `dist/server/` (the Worker bundle). The Cloudflare adapter prerenders the static routes and emits the server manifest used by the custom Worker for `/roadmap/`.
 
 ## Cloudflare deployment
 
-The site can be deployed through Cloudflare Workers Builds as a static-assets-only Worker. The checked-in `wrangler.jsonc` runs the Astro build and uploads `dist/`; no Cloudflare Astro adapter or server-side Worker code is needed.
+The checked-in `wrangler.jsonc` runs the Astro build, uploads the prerendered assets in `dist/client/`, and uses `src/worker.ts` as a custom Worker entrypoint. The Worker delegates to Astro's supported Cloudflare handler and retains the social-card origin rewrite used by preview deployments. Run `npm run build` before `npx wrangler deploy`; the adapter writes Wrangler's generated deployment target during the build.
 
-For a Cloudflare Pages project, use these equivalent settings:
+The `/roadmap/` route reads the public organization project through the existing `agent-hooks-protocol-bot` GitHub App. Production requires the encrypted Worker secret `AHP_BOT_PRIVATE_KEY`; do not add the private key to Wrangler configuration or source control. For local development only, place it in an ignored `.dev.vars` file:
 
-- **Build command:** `npm run build`
-- **Build output directory:** `dist`
-- **Root directory:** `/`
+```ini
+AHP_BOT_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+```
+
+The route discovers the app's organization installation, mints a short-lived installation token, and queries GitHub GraphQL. Roadmap data is cached for five minutes in the Cloudflare Cache API, with a longer-lived cached copy used if GitHub is temporarily unavailable. The HTML response also advertises a five-minute shared-cache lifetime.
 
 ## Protocol sources
 

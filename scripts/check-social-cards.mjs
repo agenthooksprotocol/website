@@ -10,11 +10,12 @@ async function filesUnder(directory) {
   }))).flat();
 }
 
-const files = await filesUnder('dist');
+const outputDirectory = 'dist/client';
+const files = await filesUnder(outputDirectory);
 const htmlFiles = files.filter((file) => file.endsWith('.html'));
 const cardFiles = new Set(
   files.filter((file) => {
-    const relativePath = path.relative('dist', file).split(path.sep).join('/');
+    const relativePath = path.relative(outputDirectory, file).split(path.sep).join('/');
     return /^social-cards\/[a-f0-9]{20}\.png$/.test(relativePath);
   }),
 );
@@ -30,7 +31,7 @@ for (const htmlFile of htmlFiles) {
     continue;
   }
 
-  const imageFile = path.join('dist', ...new URL(openGraphImage).pathname.split('/'));
+  const imageFile = path.join(outputDirectory, ...new URL(openGraphImage).pathname.split('/'));
   linkedCards.add(imageFile);
   try {
     await stat(imageFile);
@@ -49,12 +50,13 @@ for (const cardFile of cardFiles) {
 for (const cardFile of linkedCards) {
   if (!cardFiles.has(cardFile)) errors.push(`${cardFile}: linked image is not a hashed social card`);
 }
-const homeHtml = await readFile('dist/index.html', 'utf8');
+const homeHtml = await readFile(path.join(outputDirectory, 'index.html'), 'utf8');
 const homeImage = homeHtml.match(/<meta property="og:image" content="([^"]+)"/u)?.[1];
 const homeCard = homeImage === undefined
   ? null
-  : await readFile(path.join('dist', ...new URL(homeImage).pathname.split('/')));
-for (const legacyPath of ['dist/social-card.png', 'dist/social-card-v2.png']) {
+  : await readFile(path.join(outputDirectory, ...new URL(homeImage).pathname.split('/')));
+for (const legacyName of ['social-card.png', 'social-card-v2.png']) {
+  const legacyPath = path.join(outputDirectory, legacyName);
   try {
     const legacyCard = await readFile(legacyPath);
     if (homeCard === null || !legacyCard.equals(homeCard)) {
