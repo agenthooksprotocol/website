@@ -3,27 +3,26 @@ import '../styles/global.css';
 import Logo from '../components/Logo.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { GITHUB_ORG, SPEC_URL, protocolMetadata, protocolRoutes } from '../config/nav';
-import { socialCardPath } from '../lib/social-card';
 
 interface Props {
   title?: string;
   description?: string;
   socialTitle?: string;
+  socialCardPathname?: string;
 }
 
 const {
   title = protocolMetadata.projectName,
   description = protocolMetadata.projectDescription,
   socialTitle = title,
+  socialCardPathname = '/social-card.png',
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const pathname = Astro.url.pathname;
-const socialCardURL = new URL(
-  await socialCardPath({ title: socialTitle, description, pathname }),
-  Astro.site,
-);
+const socialCardURL = new URL(socialCardPathname, Astro.site);
 const isDocs = pathname === '/docs' || pathname.startsWith('/docs/');
+const isRoadmap = pathname === '/roadmap' || pathname.startsWith('/roadmap/');
 ---
 
 <!doctype html>
@@ -79,6 +78,7 @@ const isDocs = pathname === '/docs' || pathname.startsWith('/docs/');
         </a>
         <nav class="site-nav" aria-label="Primary">
           <a href="/docs/" aria-current={isDocs ? 'page' : undefined}>Docs</a>
+          <a href="/roadmap/" aria-current={isRoadmap ? 'page' : undefined}>Roadmap</a>
           <a href={SPEC_URL}>Specification</a>
           <a href={GITHUB_ORG} target="_blank" rel="noreferrer">
             GitHub<span class="external-mark" aria-hidden="true">↗</span>

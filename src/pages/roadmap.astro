@@ -1,0 +1,122 @@
+---
+export const prerender = false;
+
+import { env } from 'cloudflare:workers';
+import Layout from '../layouts/Layout.astro';
+import { getRoadmap, ROADMAP_SOURCE_URL, type RoadmapWorkstream } from '../lib/roadmap';
+
+const description = 'Planned work across the Agent Hooks Protocol specification, transports, SDKs, security, and conformance.';
+let roadmap: Awaited<ReturnType<typeof getRoadmap>> | undefined;
+let loadError = false;
+
+try {
+  roadmap = await getRoadmap(env.AHP_BOT_PRIVATE_KEY);
+} catch {
+  loadError = true;
+  Astro.response.status = 503;
+}
+
+Astro.response.headers.set(
+  'Cache-Control',
+  loadError ? 'no-store' : 'public, max-age=0, s-maxage=300, stale-if-error=86400',
+);
+
+const workstreams: Array<{ name: RoadmapWorkstream; description: string }> = [
+  { name: 'Protocol', description: 'Lifecycle events, data models, and control semantics.' },
+  { name: 'Transport', description: 'Complete stdio and HTTP protocol bindings.' },
+  { name: 'Security', description: 'Authentication, authorization, and trust.' },
+  { name: 'SDK', description: 'Client and server transport runtimes.' },
+  { name: 'Conformance', description: 'Compatibility evidence and release qualification.' },
+];
+const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeZone: 'UTC' });
+const lastUpdated = roadmap === undefined ? undefined : dateFormatter.format(new Date(roadmap.updatedAt));
+const refreshed = roadmap === undefined
+  ? undefined
+  : new Intl.DateTimeFormat('en', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'UTC',
+    }).format(new Date(roadmap.refreshedAt));
+---
+
+<Layout
+  title="Roadmap – Agent Hooks Protocol"
+  socialTitle="Roadmap"
+  description={description}
+  socialCardPathname="/social-card.png"
+>
+  <div class="roadmap">
+    <header class="roadmap-header">
+      <h1>Roadmap</h1>
+      <p>{description}</p>
+    </header>
+
+    {roadmap && (
+      <aside class="roadmap-updated" aria-label="Roadmap update date">
+        Last updated: <strong><time datetime={roadmap.updatedAt}>{lastUpdated}</time></strong>
+      </aside>
+    )}
+
+    {
+      loadError ? (
+        <section class="roadmap-state" aria-labelledby="roadmap-unavailable">
+          <h2 id="roadmap-unavailable">Roadmap temporarily unavailable</h2>
+          <p>GitHub could not be reached and no cached roadmap is available yet.</p>
+          <a href={ROADMAP_SOURCE_URL}>View the canonical project on GitHub</a>
+        </section>
+      ) : roadmap && roadmap.items.length === 0 ? (
+        <section class="roadmap-state" aria-labelledby="roadmap-empty">
+          <h2 id="roadmap-empty">No roadmap items yet</h2>
+          <p>The public project is currently empty. Check GitHub for the latest project activity.</p>
+          <a href={roadmap.projectUrl}>View the canonical project on GitHub</a>
+        </section>
+      ) : (
+        <div class="roadmap-groups">
+          {workstreams.map((workstream) => {
+            const items = roadmap?.items.filter((item) => item.workstream === workstream.name) ?? [];
+            if (items.length === 0) return null;
+            return (
+              <section class="roadmap-section" aria-labelledby={`workstream-${workstream.name.toLowerCase()}`}>
+                <header>
+                  <h2 id={`workstream-${workstream.name.toLowerCase()}`}>{workstream.name}</h2>
+                  <p>{workstream.description}</p>
+                </header>
+                <ul class="roadmap-list">
+                    {items.map((item) => (
+                      <li class="roadmap-item">
+                        <div class="roadmap-item-heading">
+                          <h3><a href={item.url}>{item.title}</a></h3>
+                          {item.status && <span class="roadmap-status">{item.status}</span>}
+                        </div>
+                        <p class="roadmap-item-meta">
+                          {item.kind === 'draft' ? 'Draft item' : `${item.repository} #${item.number}`}
+                          {item.milestone && ` · ${item.milestone}`}
+                        </p>
+                        {item.labels.length > 0 && (
+                          <ul class="roadmap-tags" aria-label={`Labels for ${item.title}`}>
+                            {item.labels.map((label) => <li>{label}</li>)}
+                          </ul>
+                        )}
+                      </li>
+                    ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
+      )
+    }
+
+    {
+      roadmap && (
+        <footer class="roadmap-provenance">
+          <p>
+            Source: <a href={roadmap.projectUrl}>{roadmap.projectTitle}</a> on GitHub Projects.
+            {' '}Last refreshed <time datetime={roadmap.refreshedAt}>{refreshed} UTC</time>.
+            {roadmap.stale && ' GitHub was unavailable, so this is the most recent cached copy.'}
+          </p>
+        </footer>
+      )
+    }
+  </div>
+</Layout>

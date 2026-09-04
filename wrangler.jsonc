@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "agenthooksprotocol-website",
+  "name": "website",
   "main": "src/worker.ts",
   "compatibility_date": "2026-08-26",
   "build": {
@@ -9,6 +9,6 @@
   "assets": {
     "binding": "ASSETS",
     "directory": "./dist",
-    "run_worker_first": ["/", "/docs", "/docs/*"]
+    "run_worker_first": ["/", "/docs", "/docs/*", "/roadmap", "/roadmap/*"]
   }
 }
