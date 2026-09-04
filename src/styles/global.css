@@ -485,7 +485,7 @@ pre {
   line-height: 1.65;
 }
 
-.roadmap-horizons {
+.roadmap-groups {
   display: grid;
   gap: 42px;
 }
@@ -567,11 +567,6 @@ pre {
 
 .roadmap-tags li {
   padding: 3px 8px;
-}
-
-.roadmap-tags .roadmap-area {
-  border-color: var(--accent);
-  background: var(--accent-soft);
 }
 
 .roadmap-section-empty {

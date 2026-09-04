@@ -10,17 +10,16 @@ const FRESH_TTL_SECONDS = 5 * 60;
 const STALE_TTL_SECONDS = 7 * 24 * 60 * 60;
 const CACHE_ORIGIN = `${SITE_ORIGIN}/.roadmap-cache`;
 
-export type RoadmapHorizon = 'Now' | 'Next' | 'Later';
+export type RoadmapWorkstream = 'Protocol' | 'Transport' | 'Security' | 'SDK' | 'Conformance';
 
 export interface RoadmapItem {
   id: string;
   title: string;
   url: string;
   kind: 'issue' | 'draft';
-  horizon: RoadmapHorizon;
-  horizonAssigned: boolean;
+  workstream?: RoadmapWorkstream;
   status?: string;
-  area?: string;
+  milestone?: string;
   labels: string[];
   repository?: string;
   number?: number;
@@ -49,6 +48,7 @@ interface GitHubProjectItem {
     url?: string;
     number?: number;
     repository?: { nameWithOwner?: string };
+    milestone?: { title?: string };
     labels?: { nodes?: Array<{ name?: string }> };
   };
   fieldValues?: { nodes?: GitHubFieldValue[] };
@@ -191,6 +191,7 @@ const PROJECT_QUERY = `
                 url
                 number
                 repository { nameWithOwner }
+                milestone { title }
                 labels(first: 30) { nodes { name } }
               }
               ... on DraftIssue { title }
@@ -221,12 +222,11 @@ function projectField(item: GitHubProjectItem, fieldName: string) {
   return value?.name ?? value?.text;
 }
 
-function normalizeHorizon(value?: string): { horizon: RoadmapHorizon; assigned: boolean } {
-  const horizon = value?.trim().toLowerCase();
-  if (horizon === 'now') return { horizon: 'Now', assigned: true };
-  if (horizon === 'next') return { horizon: 'Next', assigned: true };
-  if (horizon === 'later') return { horizon: 'Later', assigned: true };
-  return { horizon: 'Later', assigned: false };
+function normalizeWorkstream(value?: string): RoadmapWorkstream | undefined {
+  if (value === 'Protocol' || value === 'Transport' || value === 'Security' || value === 'SDK' || value === 'Conformance') {
+    return value;
+  }
+  return undefined;
 }
 
 async function fetchRoadmap(privateKey: string): Promise<RoadmapData> {
@@ -257,16 +257,14 @@ async function fetchRoadmap(privateKey: string): Promise<RoadmapData> {
     if (item.isArchived || item.content?.title === undefined) return [];
     const kind = item.content.__typename === 'Issue' ? 'issue' : item.content.__typename === 'DraftIssue' ? 'draft' : null;
     if (kind === null) return [];
-    const normalized = normalizeHorizon(projectField(item, 'Horizon'));
     return [{
       id: item.id,
       title: item.content.title,
       url: item.content.url ?? projectUrl,
       kind,
-      horizon: normalized.horizon,
-      horizonAssigned: normalized.assigned,
+      workstream: normalizeWorkstream(projectField(item, 'Workstream')),
       status: projectField(item, 'Status'),
-      area: projectField(item, 'Area'),
+      milestone: item.content.milestone?.title,
       labels: item.content.labels?.nodes?.flatMap((label) => label.name ? [label.name] : []) ?? [],
       repository: item.content.repository?.nameWithOwner,
       number: item.content.number,

@@ -3,9 +3,9 @@ export const prerender = false;
 
 import { env } from 'cloudflare:workers';
 import Layout from '../layouts/Layout.astro';
-import { getRoadmap, ROADMAP_SOURCE_URL, type RoadmapHorizon } from '../lib/roadmap';
+import { getRoadmap, ROADMAP_SOURCE_URL, type RoadmapWorkstream } from '../lib/roadmap';
 
-const description = 'What the Agent Hooks Protocol project is working on now, next, and later.';
+const description = 'The path from the current Working Draft to a complete, stable Agent Hooks Protocol v1.';
 let roadmap: Awaited<ReturnType<typeof getRoadmap>> | undefined;
 let loadError = false;
 
@@ -21,10 +21,12 @@ Astro.response.headers.set(
   loadError ? 'no-store' : 'public, max-age=0, s-maxage=300, stale-if-error=86400',
 );
 
-const horizons: Array<{ name: RoadmapHorizon; description: string }> = [
-  { name: 'Now', description: 'Active priorities and work currently underway.' },
-  { name: 'Next', description: 'Priorities expected to follow current work.' },
-  { name: 'Later', description: 'Ideas and work being considered for a future horizon.' },
+const workstreams: Array<{ name: RoadmapWorkstream; description: string }> = [
+  { name: 'Protocol', description: 'Lifecycle events, data models, and control semantics.' },
+  { name: 'Transport', description: 'Complete stdio and HTTP protocol bindings.' },
+  { name: 'Security', description: 'Authentication, authorization, and trust.' },
+  { name: 'SDK', description: 'Client and server transport runtimes.' },
+  { name: 'Conformance', description: 'Compatibility evidence and release qualification.' },
 ];
 const refreshed = roadmap === undefined
   ? undefined
@@ -43,8 +45,8 @@ const refreshed = roadmap === undefined
 >
   <div class="roadmap">
     <header class="roadmap-header">
-      <p class="eyebrow">Public project roadmap</p>
-      <h1>Now, next, and later</h1>
+      <p class="eyebrow">AHP v1 roadmap</p>
+      <h1>The road to AHP v1</h1>
       <p>{description}</p>
     </header>
 
@@ -62,19 +64,17 @@ const refreshed = roadmap === undefined
           <a href={roadmap.projectUrl}>View the canonical project on GitHub</a>
         </section>
       ) : (
-        <div class="roadmap-horizons">
-          {horizons.map((horizon) => {
-            const items = roadmap?.items.filter((item) => item.horizon === horizon.name) ?? [];
+        <div class="roadmap-groups">
+          {workstreams.map((workstream) => {
+            const items = roadmap?.items.filter((item) => item.workstream === workstream.name) ?? [];
+            if (items.length === 0) return null;
             return (
-              <section class="roadmap-section" aria-labelledby={`horizon-${horizon.name.toLowerCase()}`}>
+              <section class="roadmap-section" aria-labelledby={`workstream-${workstream.name.toLowerCase()}`}>
                 <header>
-                  <h2 id={`horizon-${horizon.name.toLowerCase()}`}>{horizon.name}</h2>
-                  <p>{horizon.description}</p>
+                  <h2 id={`workstream-${workstream.name.toLowerCase()}`}>{workstream.name}</h2>
+                  <p>{workstream.description}</p>
                 </header>
-                {items.length === 0 ? (
-                  <p class="roadmap-section-empty">No items in this horizon.</p>
-                ) : (
-                  <ul class="roadmap-list">
+                <ul class="roadmap-list">
                     {items.map((item) => (
                       <li class="roadmap-item">
                         <div class="roadmap-item-heading">
@@ -83,18 +83,16 @@ const refreshed = roadmap === undefined
                         </div>
                         <p class="roadmap-item-meta">
                           {item.kind === 'draft' ? 'Draft item' : `${item.repository} #${item.number}`}
-                          {!item.horizonAssigned && ' · Horizon not assigned'}
+                          {item.milestone && ` · ${item.milestone}`}
                         </p>
-                        {(item.area || item.labels.length > 0) && (
-                          <ul class="roadmap-tags" aria-label={`Area and labels for ${item.title}`}>
-                            {item.area && <li class="roadmap-area">Area: {item.area}</li>}
+                        {item.labels.length > 0 && (
+                          <ul class="roadmap-tags" aria-label={`Labels for ${item.title}`}>
                             {item.labels.map((label) => <li>{label}</li>)}
                           </ul>
                         )}
                       </li>
                     ))}
-                  </ul>
-                )}
+                </ul>
               </section>
             );
           })}
