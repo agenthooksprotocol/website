@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: sync-protocol-docs
@@ -17,6 +17,26 @@ jobs:
     name: Refresh documentation mirrors
     runs-on: ubuntu-latest
     steps:
+      - name: Check sync app configuration
+        env:
+          APP_ID: ${{ vars.WEBSITE_SYNC_APP_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.WEBSITE_SYNC_APP_PRIVATE_KEY }}
+        run: |
+          if [[ -z "$APP_ID" || -z "$APP_PRIVATE_KEY" ]]; then
+            echo "::error::Configure WEBSITE_SYNC_APP_ID and WEBSITE_SYNC_APP_PRIVATE_KEY for the website repository."
+            exit 1
+          fi
+
+      - name: Create website installation token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.WEBSITE_SYNC_APP_ID }}
+          private-key: ${{ secrets.WEBSITE_SYNC_APP_PRIVATE_KEY }}
+          owner: agenthooksprotocol
+          repositories: website
+          permission-contents: write
+
       - name: Check out protocol sources
         uses: actions/checkout@v5
         with:
@@ -30,6 +50,7 @@ jobs:
         with:
           ref: main
           path: website
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
@@ -40,13 +61,19 @@ jobs:
 
       - name: Synchronize and publish docs
         working-directory: website
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          bot_login="${APP_SLUG}[bot]"
+          bot_id=$(gh api "users/$bot_login" --jq .id)
+          git config user.name "$bot_login"
+          git config user.email "${bot_id}+${bot_login}@users.noreply.github.com"
 
           for attempt in 1 2 3; do
             git fetch origin main
             git reset --hard origin/main
+            base=$(git rev-parse HEAD)
             npm ci
             npm run sync:protocol-docs -- ../protocol
             npm run build
@@ -64,6 +91,11 @@ jobs:
               exit 0
             fi
 
+            git fetch origin main
+            if [[ "$(git rev-parse origin/main)" == "$base" ]]; then
+              echo "::error::Website push was rejected without a concurrent main update. Check the app's repository permissions and ruleset bypass."
+              exit 1
+            fi
             echo "::warning::Website main changed during sync; retrying ($attempt/3)."
           done
 

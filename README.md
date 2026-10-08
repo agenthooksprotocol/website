@@ -37,4 +37,8 @@ The front page is maintained in this repository. All pages under `/docs` are gen
 
 The Astro build prerenders a dedicated social card for every page at a content-addressed URL. Social-card images are build outputs and must not be added to `public`.
 
-Every push to `agent-hooks-protocol/main` dispatches this repository's `sync-protocol-docs.yml` workflow. Configure the `agent-hooks-protocol` Actions variable `WEBSITE_SYNC_APP_ID` and secret `WEBSITE_SYNC_APP_PRIVATE_KEY` for a GitHub App installed on `website` with **Contents: read and write** permission. The dispatcher mints a short-lived installation token and sends a `repository_dispatch` event; the website workflow then regenerates all mirrors, validates the Astro build, and commits changes with its own `GITHUB_TOKEN`.
+Every push to `agent-hooks-protocol/main` dispatches this repository's `sync-protocol-docs.yml` workflow. Configure the Actions variable `WEBSITE_SYNC_APP_ID` and secret `WEBSITE_SYNC_APP_PRIVATE_KEY` in **both repositories**, or expose organization-level credentials to both. Use the AHP bot app installed on `website` with **Contents: read and write** permission. Never commit its private key.
+
+The dispatcher mints a short-lived installation token and sends a `repository_dispatch` event. The website workflow mints its own token for the same app, regenerates all mirrors, validates the Astro build, and pushes using that token and the app's bot commit identity. The default `GITHUB_TOKEN` remains read-only. The app needs **Always** bypass for every applicable ruleset that restricts updates or requires pull requests on website `main`; dispatch authentication alone does not authorize the later push.
+
+After making the credentials available and merging workflow changes, start a new **Sync protocol docs** run with **Run workflow** on `main`. Rerunning an old failed run uses its old workflow revision. A push rejection is retried only when remote `main` moved during synchronization.
