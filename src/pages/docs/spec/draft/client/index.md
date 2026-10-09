@@ -8,7 +8,7 @@ sourceUrl: https://github.com/agenthooksprotocol/agent-hooks-protocol/blob/main/
 
 The Harness is the AHP protocol client, and the Backend is the AHP protocol server. This section is reserved for features exposed by a Harness to a Backend; the AHP role names remain authoritative in protocol prose.
 
-This protocol revision defines no client-offered protocol feature or Backend-initiated method. Harness responsibilities for messages sent to Backend Server Features are defined by the [Base Protocol](/docs/spec/draft/base/) and the relevant [Server Features](/docs/spec/draft/server/), rather than being restated here as a fabricated client feature.
+This protocol revision defines no client-offered protocol feature or Backend-initiated method. Harness responsibilities for messages sent to Backend Server Features are defined by the [Base Protocol](/docs/spec/draft/base/) and the relevant [Server Features](/docs/spec/draft/server/).
 
 The only client-specific material in this protocol revision is:
 

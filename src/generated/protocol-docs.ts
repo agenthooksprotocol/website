@@ -42,6 +42,50 @@ export const generatedDocsNav = [
       {
         "title": "Maintainers",
         "href": "/docs/maintainers/"
+      },
+      {
+        "title": "Draft elicitation, observation, and compaction APIs",
+        "href": "/docs/accepted-boundary-apis/"
+      },
+      {
+        "title": "Shared intercept application scenarios",
+        "href": "/docs/interop/"
+      },
+      {
+        "title": "Cross-language adapter contract v1",
+        "href": "/docs/interop/contract/"
+      },
+      {
+        "title": "Cross-language matrix",
+        "href": "/docs/interop/matrix/"
+      },
+      {
+        "title": "Cross-language lifecycle integration",
+        "href": "/docs/interop/lifecycle-matrix/"
+      },
+      {
+        "title": "Lifecycle integration adapter contract (test control v1)",
+        "href": "/docs/interop/lifecycle/"
+      },
+      {
+        "title": "Offline MCP elicitation wire matrix",
+        "href": "/docs/interop/elicitation/"
+      },
+      {
+        "title": "Compaction runtime and cross-language matrix",
+        "href": "/docs/interop/compaction/"
+      },
+      {
+        "title": "Required SDK integration check",
+        "href": "/docs/interop/ci/"
+      },
+      {
+        "title": "Synthetic interoperability TLS fixtures — TEST ONLY",
+        "href": "/docs/interop/fixtures/"
+      },
+      {
+        "title": "Authoritative MCP elicitation pin",
+        "href": "/docs/upstream/mcp/2025-11-25/"
       }
     ]
   },
@@ -101,6 +145,10 @@ export const generatedDocsNav = [
         "href": "/docs/spec/draft/base/transports/http/"
       },
       {
+        "title": "Observation delivery after settlement",
+        "href": "/docs/spec/draft/observation-disposition/"
+      },
+      {
         "title": "Server features",
         "href": "/docs/spec/draft/server/"
       },
@@ -121,16 +169,32 @@ export const generatedDocsNav = [
         "href": "/docs/spec/draft/client/adapters/"
       },
       {
+        "title": "Execution payload encoding",
+        "href": "/docs/spec/draft/execution-payloads/"
+      },
+      {
+        "title": "Interaction and configuration payload encoding",
+        "href": "/docs/spec/draft/interaction-payloads/"
+      },
+      {
+        "title": "Task, workspace, file changes and event lineage",
+        "href": "/docs/spec/draft/task-workspace-lineage/"
+      },
+      {
+        "title": "Binary content upload binding",
+        "href": "/docs/spec/draft/content-upload/"
+      },
+      {
+        "title": "Capability discovery, registration, and endpoint authentication",
+        "href": "/docs/spec/draft/capability-auth/"
+      },
+      {
         "title": "Design rationale and references",
         "href": "/docs/spec/draft/rationale/"
       },
       {
         "title": "Open questions",
         "href": "/docs/spec/draft/open-questions/"
-      },
-      {
-        "title": "Proposed implementation plan",
-        "href": "/docs/spec/draft/implementation-plan/"
       },
       {
         "title": "Changelog",

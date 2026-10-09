@@ -92,3 +92,63 @@ cargo run --locked --manifest-path tools/sdk-codegen/Cargo.toml -- \
 ```
 
 The structural codecs preserve unknown JSON. See [`tools/sdk-codegen/README.md`](/docs/tools/sdk-codegen/) for their compatibility contract.
+
+## Full draft TypeScript bundle
+
+`python3 tools/generate_sdk.py --sdk ../typescript-sdk` emits the full draft codec,
+canonical schemas, and source lock. Add `--check` for byte-for-byte reproducibility
+without writing SDK artifacts. See [boundary APIs and runtime scope](/docs/accepted-boundary-apis/).
+
+`python3 tools/generate_sdk.py --all` regenerates TypeScript plus the sibling
+Python, Go and Rust codecs, canonical schema bundles and source locks. Use
+`--all --check` to compare every output without modifying SDK artifacts.
+TypeScript codecs and schema bundles use Prettier **3.6.2** via pinned `npx`,
+with configuration discovery disabled. Python codecs use Ruff **0.12.12** with
+isolated defaults and target Python 3.11; the generator rejects other versions.
+Install it into the Python interpreter used for generation:
+`python3 -m pip install ruff==0.12.12`. Node.js 20 with npm is also required;
+`npx` downloads the pinned Prettier on first use (or uses its local cache).
+Go output is normalized with `gofmt` (CI uses Go 1.24); Rust output uses
+`rustfmt +1.88.0 --edition 2024`. Install these toolchains before generating or
+checking. Both integration and synchronization CI install formatter dependencies.
+These same formatter versions/options apply to handwritten SDK sources; do not
+hand-format generated code. Run regeneration followed by `--all --check` to
+verify that the committed output is reproducible.
+CI uses `--output-dir generated` to stage the same codecs, canonical bundles,
+and content-derived locks per language, then installs them at the local-script
+paths. Source commit provenance remains in the synchronization PR, not in the
+reproducible content lock.
+See the [draft specification](/docs/spec/draft/) for effect, discovery,
+content and event shapes, and the boundary API documentation for runtime limits.
+
+### Format validation in the canonical subset
+
+The checker applies absolute RFC3986 URI grammar and RFC3339 lexical/calendar
+checks, not scheme-only URI checks or Python's broader ISO-date acceptance.
+Unescaped whitespace, invalid percent escapes, malformed IP literals, compact
+dates and missing timezone separators are rejected. Integer-valued JSON numbers
+such as 1.0 satisfy `integer`; booleans do not. This is not URL authorization or
+HTTP header validation. JSON Schema patterns retain search semantics; exact
+SHA-256 fields therefore additionally enforce minLength/maxLength 64.
+
+## SDK sync app permissions
+
+The post-merge `sync-sdks.yml` workflow uses `install_generated_sdk.py` to install
+generated artifacts and update each SDK CI checkout to the lock's immutable
+protocol source commit. Configure `SDK_SYNC_APP_ID` and `SDK_SYNC_APP_PRIVATE_KEY`
+for a GitHub App installed on all four SDK repositories.
+
+Before enabling sync, the app must request **Contents: read and write**,
+**Pull requests: read and write**, and **Workflows: read and write** repository
+permissions, and the organization installation must approve those permissions.
+Workflows write is required because synchronization updates
+`.github/workflows/ci.yml`; Contents write alone cannot push that change.
+An app owner must configure the additional permission and an authorized
+organization owner must approve the installation permission update. Changing
+this workflow does not grant app permissions.
+
+Token creation explicitly requests all three write permissions for the selected
+SDK repository. If the app or installation lacks one, the sync job fails at
+**Generate installation token**, rather than later when pushing the SDK PR.
+Confirm the approved installation permissions before merging a sync change or
+retrying a failed sync run.
