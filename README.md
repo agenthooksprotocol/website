@@ -37,7 +37,7 @@ The front page is maintained in this repository. All pages under `/docs` are gen
 
 The Astro build prerenders a dedicated social card for every page at a content-addressed URL. Social-card images are build outputs and must not be added to `public`.
 
-Every push to `agent-hooks-protocol/main` dispatches this repository's `sync-protocol-docs.yml` workflow. Reuse organization Actions variable `AHP_BOT_APP_ID` and organization Actions secret `AHP_BOT_APP_PRIVATE_KEY`, with selected-repository access restricted to `agent-hooks-protocol` and `website`. The SDK sync workflow also uses these shared credentials. Do not create same-named repository entries, which override organization values. Use the AHP bot app installed on `website` with **Contents: read and write** permission. Never commit its private key.
+Every push to `agent-hooks-protocol/main` dispatches this repository's `sync-protocol-docs.yml` workflow. Reuse organization Actions secrets `AHP_BOT_APP_ID` and `AHP_BOT_APP_PRIVATE_KEY`, with selected-repository access restricted to `agent-hooks-protocol` and `website`. The SDK sync workflow also uses these shared credentials. Do not create same-named repository entries, which override organization values. Use the AHP bot app installed on `website` with **Contents: read and write** permission. Never commit its private key.
 
 Create the organization entries before merging this credential-name migration. After successful SDK and website sync runs, remove the obsolete repository variables and secrets with the `SDK_SYNC_` and `WEBSITE_SYNC_` prefixes.
 
