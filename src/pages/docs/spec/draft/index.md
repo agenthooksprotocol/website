@@ -25,7 +25,7 @@ This is the canonical, language-neutral Agent Hooks Protocol specification. The 
 - [Interaction and MCP elicitation payloads](/docs/spec/draft/interaction-payloads/)
 - [Task, workspace, and lineage semantics](/docs/spec/draft/task-workspace-lineage/)
 - [Observation delivery](/docs/spec/draft/observation-disposition/)
-- [Content uploads](/docs/spec/draft/content-upload/)
+- [Canonical inline messages, content selection, and attachment uploads](/docs/spec/draft/content-upload/)
 - [Capabilities, registration, and authentication](/docs/spec/draft/capability-auth/)
 - [Design rationale and references](/docs/spec/draft/rationale/)
 - [Open questions](/docs/spec/draft/open-questions/)
