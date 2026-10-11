@@ -199,6 +199,10 @@ export const generatedDocsNav = [
       {
         "title": "Changelog",
         "href": "/docs/spec/draft/changelog/"
+      },
+      {
+        "title": "Typed payload contracts",
+        "href": "/docs/spec/draft/typed-contracts/"
       }
     ]
   },
