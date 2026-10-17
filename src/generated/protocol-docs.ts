@@ -84,6 +84,10 @@ export const generatedDocsNav = [
         "href": "/docs/interop/fixtures/"
       },
       {
+        "title": "AHP-0002: HTTP registration headers across the spec and SDKs",
+        "href": "/docs/proposals/ahp-0002/"
+      },
+      {
         "title": "Authoritative MCP elicitation pin",
         "href": "/docs/upstream/mcp/2025-11-25/"
       }
