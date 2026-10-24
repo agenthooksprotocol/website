@@ -88,6 +88,10 @@ export const generatedDocsNav = [
         "href": "/docs/proposals/ahp-0002/"
       },
       {
+        "title": "Server-driven configuration design",
+        "href": "/docs/server-driven-configuration/"
+      },
+      {
         "title": "Authoritative MCP elicitation pin",
         "href": "/docs/upstream/mcp/2025-11-25/"
       }
@@ -191,6 +195,10 @@ export const generatedDocsNav = [
       {
         "title": "Capability discovery, registration, and endpoint authentication",
         "href": "/docs/spec/draft/capability-auth/"
+      },
+      {
+        "title": "Server-driven configuration",
+        "href": "/docs/spec/draft/server-driven-configuration/"
       },
       {
         "title": "Design rationale and references",
