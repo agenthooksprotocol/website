@@ -165,6 +165,9 @@ or client credentials to arbitrary advertised URLs. A cached identity or token
 MUST remain bound to its trusted issuer, resource, client, and authorized scope.
 
 Client registration and selection of a supported OAuth flow remain client policy.
+SDKs select a pre-registered client, then a Client ID Metadata Document, then
+Dynamic Client Registration only when host policy permits it, as specified in
+[SDK client registration](/docs/spec/draft/sdk-auth-lifecycle/#client-registration).
 Interactive authorization MUST use authorization code with PKCE and validated
 redirect URIs/state; unattended client credentials require explicit issuer support.
 Clients MAY expose host UI/callbacks to prepare or renew authorization, but these
