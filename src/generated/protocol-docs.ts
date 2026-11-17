@@ -213,6 +213,10 @@ export const generatedDocsNav = [
         "href": "/docs/spec/draft/changelog/"
       },
       {
+        "title": "SDK authentication lifecycle contract",
+        "href": "/docs/spec/draft/sdk-auth-lifecycle/"
+      },
+      {
         "title": "Typed payload contracts",
         "href": "/docs/spec/draft/typed-contracts/"
       }
