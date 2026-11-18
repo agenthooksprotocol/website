@@ -86,7 +86,7 @@ A portable registration document is a JSON object with an ordered `hooks` array.
 <td>Non-empty array of explicit event subscriptions. Omission selects server-driven configuration discovery; an explicit empty array is invalid.</td>
 </tr>
 </table>
-See [server-driven configuration](/docs/spec/draft/server-driven-configuration/) for backend-provided defaults, explicit client precedence, and initialization admission.
+See [server-driven configuration](/docs/spec/draft/server-driven-configuration/) for backend-provided defaults, explicit client precedence, and initialization admission. A backend with omitted subscriptions is advisory while its configuration is unavailable: no failure policy is inferred, and the SDK delivers events without it; whether to continue is host policy. Enforcement requires explicit subscriptions with `failurePolicy` `fail-closed` ([skipped backends](/docs/spec/draft/server-driven-configuration/#skipped-backends)).
 
 ### Subscription fields
 <table>
